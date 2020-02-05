@@ -9,20 +9,7 @@ exports.create = (req, res) => {
   }
 
   // Create a Book
-  const book = new Book({
-    book: req.body.book || "Untitled Book",
-    chapters: [
-      {
-        chapter: req.body.chapter,
-        verses: [
-          {
-            verse: req.body.verse,
-            text: req.body.text
-          }
-        ]
-      }
-    ]
-  });
+  const book = new Book(req.body);
 
   // Save Book in the database
   book
@@ -82,24 +69,7 @@ exports.update = (req, res) => {
   }
 
   // Find book and update it with the request body
-  Book.findByIdAndUpdate(
-    req.params.bookId,
-    {
-      book: req.body.book || "Untitled Book",
-      chapters: [
-        {
-          chapter: req.body.chapter,
-          verses: [
-            {
-              verse: req.body.verse,
-              text: req.body.text
-            }
-          ]
-        }
-      ]
-    },
-    { new: true }
-  )
+  Book.findByIdAndUpdate(req.params.bookId, req.body, { new: true })
     .then(book => {
       if (!book) {
         return res.status(404).send({
