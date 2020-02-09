@@ -34,14 +34,18 @@ exports.create = async (req, res) => {
 // Find a single user with a email
 exports.findOne = (req, res) => {
   const { email, password } = req.body;
-  User.findById(req.body)
-    .then(login => {
-      if (!login) {
+  const data = {
+    email: email,
+    password: password
+  };
+  User.find(data)
+    .then(user => {
+      if (!user) {
         return res.status(404).send({
           message: "User not found with email " + email
         });
       }
-      res.send(login);
+      res.send(user);
     })
     .catch(err => {
       if (err.kind === "String") {
@@ -50,7 +54,7 @@ exports.findOne = (req, res) => {
         });
       }
       return res.status(500).send({
-        message: "Error retrieving user with email " + email
+        message: "Error retrieving user with email " + email + err
       });
     });
 };

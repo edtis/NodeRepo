@@ -1,3 +1,3 @@
 module.exports = {
-  url: "mongodb://localhost:27017/popoverbook"
+  url: "mongodb://localhost:27017/good-book-bible"
 };
