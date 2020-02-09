@@ -35,8 +35,8 @@ exports.create = async (req, res) => {
 exports.findOne = (req, res) => {
   const { email, password } = req.body;
   const data = {
-    email: email,
-    password: password
+    "users.email": email,
+    "users.password": password
   };
   User.find(data)
     .then(user => {
