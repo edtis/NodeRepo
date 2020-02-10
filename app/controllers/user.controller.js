@@ -48,13 +48,8 @@ exports.findOne = (req, res) => {
       res.send(user);
     })
     .catch(err => {
-      if (err.kind === "String") {
-        return res.status(404).send({
-          message: "User not found with email " + email
-        });
-      }
       return res.status(500).send({
-        message: "Error retrieving user with email " + email + err
+        message: "Error retrieving user with email " + email
       });
     });
 };
