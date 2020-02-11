@@ -9,14 +9,9 @@ exports.create = async (req, res) => {
     });
   }
 
-  /* let user = await User.findOne({ email: req.body.email });
-  if (user) {
-    return res.status(400).send("User already exist!");
-  } else { */
-  // Create a User
   let user = new User(req.body);
-  /* let salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt); */
+  let salt = await bcrypt.genSalt(10);
+  user.users[0].password = await bcrypt.hash(user.users[0].password, salt);
   // Save User in the database
   user
     .save()
@@ -28,15 +23,13 @@ exports.create = async (req, res) => {
         message: err.message || "Some error occurred while creating the User."
       });
     });
-  //  }
 };
 
 // Find a single user with a email
-exports.findOne = (req, res) => {
-  const { email, password } = req.body;
+exports.findOne = async (req, res) => {
+  let { email, password } = req.body;
   const data = {
-    "users.email": email,
-    "users.password": password
+    "users.email": email
   };
   User.find(data)
     .then(user => {
@@ -45,7 +38,15 @@ exports.findOne = (req, res) => {
           message: "User not found with email " + email
         });
       }
-      res.send(user);
+      bcrypt
+        .compare(password, user[0].users[0].password)
+        .then(function(result) {
+          if (result) {
+            res.send(user);
+          } else {
+            return res.status(400).send({ message: "The password is invalid" });
+          }
+        });
     })
     .catch(err => {
       return res.status(500).send({
