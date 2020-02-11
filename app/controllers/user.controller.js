@@ -33,24 +33,32 @@ exports.findOne = async (req, res) => {
   };
   User.find(data)
     .then(user => {
-      if (!user) {
+      if (user.length === 0) {
         return res.status(404).send({
-          message: "User not found with email " + email
+          status: false,
+          message: "User not found!"
         });
       }
       bcrypt
         .compare(password, user[0].users[0].password)
         .then(function(result) {
           if (result) {
-            res.send(user);
+            res.send({
+              status: true,
+              message: "Logged in success",
+              data: user
+            });
           } else {
-            return res.status(400).send({ message: "The password is invalid" });
+            return res
+              .status(400)
+              .send({ status: false, message: "Password is invalid!" });
           }
         });
     })
     .catch(err => {
       return res.status(500).send({
-        message: "Error retrieving user with email " + email
+        status: false,
+        message: "Internal server error!"
       });
     });
 };
