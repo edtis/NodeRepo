@@ -67,6 +67,7 @@ exports.findOne = async (req, res) => {
 exports.findAll = (req, res) => {
   User.find()
     .then(data => {
+      res.send(data);
       let users = [];
       let adminAlert = {};
       let confirmedUsers = [];
@@ -95,6 +96,40 @@ exports.findAll = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving users."
+      });
+    });
+};
+
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "User can not be empty"
+    });
+  }
+  User.update(
+    {
+      "users._id": req.params.userId
+    },
+    {
+      $set: req.body
+    }
+  )
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      res.send(user);
+    })
+    .catch(err => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      return res.status(500).send({
+        message: "Error updating user with id " + err
       });
     });
 };
