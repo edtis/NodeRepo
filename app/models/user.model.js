@@ -14,8 +14,7 @@ const UserSchema = mongoose.Schema({
       Underlined: Object,
       italicized: Object,
       hightlighted: Object,
-      referenceTags: Object,
-      unicast: Object
+      referenceTags: Object
     }
   ],
   admin: {

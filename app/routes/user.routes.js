@@ -28,5 +28,5 @@ module.exports = app => {
   // Create a new User
   app.post("/user", user.create);
   app.post("/login", user.findOne);
-  //app.get("/users", user.findAll);
+  app.get("/users", user.findAll);
 };

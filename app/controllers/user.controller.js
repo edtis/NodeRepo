@@ -12,6 +12,7 @@ exports.create = async (req, res) => {
   let user = new User(req.body);
   let salt = await bcrypt.genSalt(10);
   user.users[0].password = await bcrypt.hash(user.users[0].password, salt);
+  user.users[0].created = new Date();
   // Save User in the database
   user
     .save()
@@ -65,8 +66,31 @@ exports.findOne = async (req, res) => {
 
 exports.findAll = (req, res) => {
   User.find()
-    .then(users => {
-      res.send(users);
+    .then(data => {
+      let users = [];
+      let adminAlert = {};
+      let confirmedUsers = [];
+      for (let i = 0; i < data.length; i++) {
+        users.push(...data[i].users);
+        //adminAlert.push(data[i].admin) || [];
+      }
+      for (let i = 0; i < users.length; i++) {
+        confirmedUsers.push({
+          userID: users[i]._id,
+          userEmail: users[i].email,
+          signUpDate: users[i].created,
+          confirmed: users[i].confirmed || false
+        });
+      }
+      let usersData = {
+        users: users,
+        confirmedEmail: confirmedUsers
+      };
+      res.send({
+        status: true,
+        message: "Fetched all users successfully!",
+        data: usersData
+      });
     })
     .catch(err => {
       res.status(500).send({
