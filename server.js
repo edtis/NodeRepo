@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/book.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
-require("./app/routes/admin.routes.js")(app);
+require("./app/routes/broadcast.routes.js")(app);
 // listen for requests
 app.listen(8080, () => {
   console.log("Server is listening on port 8080");

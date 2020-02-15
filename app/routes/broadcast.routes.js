@@ -23,8 +23,9 @@ module.exports = app => {
     // Pass to next layer of middleware
     next();
   });
-  const admin = require("../controllers/admin.controller.js");
+  const broadcast = require("../controllers/broadcast.controller.js");
 
-  app.post("/create/broadcast", admin.createBroadcast);
-  app.post("/broadcasts", admin.findAll);
+  app.post("/broadcast/create", broadcast.create);
+  app.get("/broadcasts", broadcast.findAll);
+  app.delete("/broadcast/delete/:broadcastId", broadcast.delete);
 };
