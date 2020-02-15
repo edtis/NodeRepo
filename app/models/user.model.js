@@ -4,6 +4,7 @@ const UserSchema = mongoose.Schema({
   id: mongoose.Schema.Types.ObjectId,
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  confirmedEmail: Boolean,
   created: Date,
   lastLogin: Date,
   favs: Object,
