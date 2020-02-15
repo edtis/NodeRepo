@@ -23,15 +23,8 @@ module.exports = app => {
     // Pass to next layer of middleware
     next();
   });
-  const user = require("../controllers/user.controller.js");
+  const admin = require("../controllers/admin.controller.js");
 
-  app.post("/user", user.create);
-  app.post("/login", user.findOne);
-  app.get("/users", user.findAll);
-  app.put("/user/:userId", user.update);
-  app.put("/admin/user/:userId", user.adminUpdate);
-  app.put("/disable/users", user.disableUsersUpdate);
-  app.get("/users/status", user.usersStatus);
-  app.delete("/user/:userId", user.delete);
-  app.put("/broadcast/:userId", user.broadcastAlerts);
+  app.post("/create/broadcast", admin.createBroadcast);
+  app.post("/broadcasts", admin.findAll);
 };

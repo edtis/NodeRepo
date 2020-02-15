@@ -2,9 +2,8 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
 const DisableUsers = require("../models/disableUsers.model.js");
 
-// Create and Save a new User
 exports.create = async (req, res) => {
-  if (!req.body.users) {
+  if (!req.body) {
     return res.status(400).send({
       message: "User can not be empty"
     });
@@ -12,9 +11,9 @@ exports.create = async (req, res) => {
 
   let user = new User(req.body);
   let salt = await bcrypt.genSalt(10);
-  user.users[0].password = await bcrypt.hash(user.users[0].password, salt);
-  user.users[0].created = new Date();
-  // Save User in the database
+  user.password = await bcrypt.hash(user.password, salt);
+  user.created = new Date();
+
   user
     .save()
     .then(data => {
@@ -27,11 +26,33 @@ exports.create = async (req, res) => {
     });
 };
 
+exports.delete = (req, res) => {
+  User.findByIdAndRemove(req.params.userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      res.send({ message: "User deleted successfully!" });
+    })
+    .catch(err => {
+      if (err.kind === "ObjectId" || err.name === "NotFound") {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      return res.status(500).send({
+        message: "Could not delete user with id " + req.params.userId
+      });
+    });
+};
+
 // Find a single user with a email
 exports.findOne = async (req, res) => {
   let { email, password } = req.body;
   const data = {
-    "users.email": email
+    email: email
   };
   User.find(data)
     .then(user => {
@@ -41,21 +62,19 @@ exports.findOne = async (req, res) => {
           message: "User not found!"
         });
       }
-      bcrypt
-        .compare(password, user[0].users[0].password)
-        .then(function(result) {
-          if (result) {
-            res.send({
-              status: true,
-              message: "Logged in success",
-              data: user
-            });
-          } else {
-            return res
-              .status(400)
-              .send({ status: false, message: "Password is invalid!" });
-          }
-        });
+      bcrypt.compare(password, user[0].password).then(function(result) {
+        if (result) {
+          res.send({
+            status: true,
+            message: "Logged in success",
+            data: user
+          });
+        } else {
+          return res
+            .status(400)
+            .send({ status: false, message: "Password is invalid!" });
+        }
+      });
     })
     .catch(err => {
       return res.status(500).send({
@@ -68,23 +87,10 @@ exports.findOne = async (req, res) => {
 exports.findAll = (req, res) => {
   User.find()
     .then(data => {
-      /* let confirmedUsers = [];
-      for (let i = 0; i < data.length; i++) {
-        confirmedUsers.push({
-          userID: data[i].users[0]._id,
-          userEmail: data[i].users[0].email,
-          signUpDate: data[i].users[0].created,
-          confirmed: data[i].users[0].confirmed || false
-        });
-      }
-      let usersData = {
-        userDetails: data,
-        confirmedEmail: confirmedUsers
-      }; */
       res.send({
         status: true,
         message: "Fetched all users successfully!",
-        data: data
+        users: data
       });
     })
     .catch(err => {
@@ -141,6 +147,42 @@ exports.adminUpdate = (req, res) => {
     {
       $set: req.body
     }
+  )
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      res.send(user);
+    })
+    .catch(err => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      return res.status(500).send({
+        message: "Error updating user with id " + err
+      });
+    });
+};
+
+exports.broadcastAlerts = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Broadcast Alert can not be empty"
+    });
+  }
+
+  User.update(
+    {
+      _id: req.params.userId
+    },
+    {
+      $set: req.body
+    },
+    { multi: true }
   )
     .then(user => {
       if (!user) {
