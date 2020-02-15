@@ -29,4 +29,7 @@ module.exports = app => {
   app.post("/login", user.findOne);
   app.get("/users", user.findAll);
   app.put("/user/:userId", user.update);
+  app.put("/admin/user/:userId", user.adminUpdate);
+  app.put("/disable/users", user.disableUsersUpdate);
+  app.get("/users/status", user.usersStatus);
 };
