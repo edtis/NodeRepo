@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
 const DisableUsers = require("../models/disableUsers.model.js");
-const sendmail = require("sendmail")();
 
 exports.create = async (req, res) => {
   if (!req.body) {
@@ -9,33 +8,34 @@ exports.create = async (req, res) => {
       message: "User can not be empty"
     });
   }
-  /*   sendmail(
-    {
-      from: "info@goodbookbible.com",
-      to: "riteshnewers@gmail.com",
-      subject: "test sendmail",
-      html: "Mail of test sendmail "
-    },
-    function(err, reply) {
-      console.log(err && err.stack);
-      console.dir(reply);
-    }
-  ); */
   let user = new User(req.body);
   let salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
   user.created = new Date();
-
-  user
-    .save()
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the User."
+  User.findOne({ email: user.email }).then(email => {
+    if (email) {
+      res.send({
+        status: false,
+        message: "User with email already found!"
       });
-    });
+    } else {
+      user
+        .save()
+        .then(data => {
+          res.send({
+            status: true,
+            message: "Successfully created account.",
+            data: data
+          });
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the User."
+          });
+        });
+    }
+  });
 };
 
 exports.delete = (req, res) => {
