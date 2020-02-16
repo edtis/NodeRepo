@@ -1,6 +1,39 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
 const DisableUsers = require("../models/disableUsers.model.js");
+const nodemailer = require("nodemailer");
+
+var rand, mailOptions, host, link, user_id;
+async function mail(user, link) {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "goodbookbible@gmail.com",
+      pass: "Test@123"
+    }
+  });
+
+  mailOptions = {
+    from: "goodbookbible@gmail.com",
+    to: "riteshnewers@gmail.com",
+    subject: "Verify Your Good Book Bible Account",
+    html:
+      "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
+      link +
+      ">Click here to verify</a>"
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      user_id = user._id;
+      console.log("Email sent: " + info.response);
+    }
+  });
+}
 
 exports.create = async (req, res) => {
   if (!req.body) {
@@ -9,6 +42,16 @@ exports.create = async (req, res) => {
       message: "User can not be empty"
     });
   }
+  var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var token = "";
+  for (var i = 16; i > 0; --i) {
+    token += chars[Math.round(Math.random() * (chars.length - 1))];
+  }
+  rand = token;
+
+  host = req.get("host");
+  link = req.headers.origin + "/verify?id=" + rand;
+
   let user = new User(req.body);
   let salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
@@ -23,6 +66,7 @@ exports.create = async (req, res) => {
       user
         .save()
         .then(data => {
+          mail(data, link);
           res.send({
             status: true,
             message: "Successfully created account.",
@@ -38,6 +82,25 @@ exports.create = async (req, res) => {
         });
     }
   });
+};
+
+exports.verify = async (req, res) => {
+  if (req.protocol + "://" + req.get("host") == "http://" + host) {
+    if (req.query.id == rand) {
+      res.send({
+        status: true,
+        message: mailOptions.to + " has been Successfully verified",
+        id: user_id
+      });
+    } else {
+      res.send({
+        status: false,
+        message: "Bad request !"
+      });
+    }
+  } else {
+    res.send({ status: false, message: "Request is from unknown source" });
+  }
 };
 
 exports.delete = (req, res) => {

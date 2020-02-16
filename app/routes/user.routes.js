@@ -32,4 +32,5 @@ module.exports = app => {
   app.put("/disable/users", user.disableUsersUpdate);
   app.get("/users/status", user.usersStatus);
   app.delete("/user/:userId", user.delete);
+  app.get("/verify", user.verify);
 };
