@@ -99,10 +99,22 @@ exports.findOne = async (req, res) => {
 exports.findAll = (req, res) => {
   User.find()
     .then(data => {
+      let confirmedEmail = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].confirmedEmail === false) {
+          confirmedEmail.push({
+            userID: data[i]._id,
+            userEmail: data[i].email,
+            signUpDate: data[i].created,
+            confirmed: data[i].confirmedEmail
+          });
+        }
+      }
       res.send({
         status: true,
         message: "Fetched all users successfully!",
-        users: data
+        users: data,
+        confirmedEmail: confirmedEmail
       });
     })
     .catch(err => {
