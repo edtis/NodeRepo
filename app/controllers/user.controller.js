@@ -5,6 +5,7 @@ const DisableUsers = require("../models/disableUsers.model.js");
 exports.create = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
+      status: false,
       message: "User can not be empty"
     });
   }
@@ -30,6 +31,7 @@ exports.create = async (req, res) => {
         })
         .catch(err => {
           res.status(500).send({
+            status: false,
             message:
               err.message || "Some error occurred while creating the User."
           });
@@ -43,18 +45,21 @@ exports.delete = (req, res) => {
     .then(user => {
       if (!user) {
         return res.status(404).send({
+          status: false,
           message: "User not found with id " + req.params.userId
         });
       }
-      res.send({ message: "User deleted successfully!" });
+      res.send({ status: true, message: "User deleted successfully!" });
     })
     .catch(err => {
       if (err.kind === "ObjectId" || err.name === "NotFound") {
         return res.status(404).send({
+          status: false,
           message: "User not found with id " + req.params.userId
         });
       }
       return res.status(500).send({
+        status: false,
         message: "Could not delete user with id " + req.params.userId
       });
     });
@@ -119,6 +124,7 @@ exports.findAll = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
+        status: false,
         message: err.message || "Some error occurred while retrieving users."
       });
     });
@@ -127,6 +133,7 @@ exports.findAll = (req, res) => {
 exports.update = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
+      status: false,
       message: "User can not be empty"
     });
   }
@@ -141,18 +148,25 @@ exports.update = (req, res) => {
     .then(user => {
       if (!user) {
         return res.status(404).send({
+          status: false,
           message: "User not found with id " + req.params.userId
         });
       }
-      res.send(user);
+      res.send({
+        status: true,
+        message: "User updated successfully",
+        user: user
+      });
     })
     .catch(err => {
       if (err.kind === "ObjectId") {
         return res.status(404).send({
+          status: false,
           message: "User not found with id " + req.params.userId
         });
       }
       return res.status(500).send({
+        status: false,
         message: "Error updating user with id " + err
       });
     });
