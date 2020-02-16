@@ -139,7 +139,7 @@ exports.update = (req, res) => {
   }
   User.update(
     {
-      "users._id": req.params.userId
+      _id: req.params.userId
     },
     {
       $set: req.body
@@ -167,76 +167,6 @@ exports.update = (req, res) => {
       }
       return res.status(500).send({
         status: false,
-        message: "Error updating user with id " + err
-      });
-    });
-};
-
-exports.adminUpdate = (req, res) => {
-  if (!req.body) {
-    return res.status(400).send({
-      message: "User can not be empty"
-    });
-  }
-  User.update(
-    {
-      _id: req.params.userId
-    },
-    {
-      $set: req.body
-    }
-  )
-    .then(user => {
-      if (!user) {
-        return res.status(404).send({
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      res.send(user);
-    })
-    .catch(err => {
-      if (err.kind === "ObjectId") {
-        return res.status(404).send({
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      return res.status(500).send({
-        message: "Error updating user with id " + err
-      });
-    });
-};
-
-exports.broadcastAlerts = (req, res) => {
-  if (!req.body) {
-    return res.status(400).send({
-      message: "Broadcast Alert can not be empty"
-    });
-  }
-
-  User.update(
-    {
-      _id: req.params.userId
-    },
-    {
-      $set: req.body
-    },
-    { multi: true }
-  )
-    .then(user => {
-      if (!user) {
-        return res.status(404).send({
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      res.send(user);
-    })
-    .catch(err => {
-      if (err.kind === "ObjectId") {
-        return res.status(404).send({
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      return res.status(500).send({
         message: "Error updating user with id " + err
       });
     });
