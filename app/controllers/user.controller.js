@@ -17,7 +17,7 @@ async function mail(user, link) {
 
   mailOptions = {
     from: "goodbookbible@gmail.com",
-    to: "riteshnewers@gmail.com",
+    to: user.email,
     subject: "Verify Your Good Book Bible Account",
     html:
       "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
