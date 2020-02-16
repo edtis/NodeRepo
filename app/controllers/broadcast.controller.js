@@ -3,6 +3,7 @@ const Broadcast = require("../models/broadcast.model.js");
 exports.create = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
+      status: false,
       message: "Broadcast Alert can not be empty"
     });
   }
@@ -11,10 +12,15 @@ exports.create = async (req, res) => {
   user
     .save()
     .then(data => {
-      res.send(data);
+      res.send({
+        status: true,
+        message: "Broadcast created successfully!",
+        data: data
+      });
     })
     .catch(err => {
       res.status(500).send({
+        status: false,
         message:
           err.message ||
           "Some error occurred while creating the broadcast alert."
@@ -33,6 +39,7 @@ exports.findAll = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
+        status: false,
         message:
           err.message || "Some error occurred while retrieving broadcast."
       });
@@ -44,18 +51,21 @@ exports.delete = (req, res) => {
     .then(broadcast => {
       if (!broadcast) {
         return res.status(404).send({
+          status: false,
           message: "Broadcast not found with id " + req.params.broadcastId
         });
       }
-      res.send({ message: "Broadcast deleted successfully!" });
+      res.send({ status: true, message: "Broadcast deleted successfully!" });
     })
     .catch(err => {
       if (err.kind === "ObjectId" || err.name === "NotFound") {
         return res.status(404).send({
+          status: false,
           message: "Broadcast not found with id " + req.params.broadcastId
         });
       }
       return res.status(500).send({
+        status: false,
         message: "Could not delete Broadcast with id " + req.params.broadcastId
       });
     });

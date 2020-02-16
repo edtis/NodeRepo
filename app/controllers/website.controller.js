@@ -3,6 +3,7 @@ const Website = require("../models/website.model.js");
 exports.create = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
+      status: false,
       message: "Website Alert can not be empty"
     });
   }
@@ -11,10 +12,15 @@ exports.create = async (req, res) => {
   user
     .save()
     .then(data => {
-      res.send(data);
+      res.send({
+        status: true,
+        message: "Website alert created successfully!",
+        data: data
+      });
     })
     .catch(err => {
       res.status(500).send({
+        status: false,
         message:
           err.message || "Some error occurred while creating the website alert."
       });
@@ -26,13 +32,15 @@ exports.findAll = (req, res) => {
     .then(data => {
       res.send({
         status: true,
-        message: "Fetched all website successfully!",
+        message: "Fetched all website alert successfully!",
         data: data
       });
     })
     .catch(err => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving website."
+        status: false,
+        message:
+          err.message || "Some error occurred while retrieving website alert."
       });
     });
 };
@@ -42,19 +50,26 @@ exports.delete = (req, res) => {
     .then(website => {
       if (!website) {
         return res.status(404).send({
-          message: "Website not found with id " + req.params.websiteId
+          status: false,
+          message: "Website alert not found with id " + req.params.websiteId
         });
       }
-      res.send({ message: "Website deleted successfully!" });
+      res.send({
+        status: true,
+        message: "Website alert deleted successfully!"
+      });
     })
     .catch(err => {
       if (err.kind === "ObjectId" || err.name === "NotFound") {
         return res.status(404).send({
-          message: "Website not found with id " + req.params.websiteId
+          status: false,
+          message: "Website alert not found with id " + req.params.websiteId
         });
       }
       return res.status(500).send({
-        message: "Could not delete Website with id " + req.params.websiteId
+        status: false,
+        message:
+          "Could not delete website alert with id " + req.params.websiteId
       });
     });
 };
