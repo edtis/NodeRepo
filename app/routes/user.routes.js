@@ -33,4 +33,6 @@ module.exports = app => {
   app.get("/users/status", user.usersStatus);
   app.delete("/user/:userId", user.delete);
   app.get("/verify", user.verify);
+  app.post("/password/reset", user.resetPassword);
+  app.get("/verify/reset/password", user.verifyResetPassword)
 };

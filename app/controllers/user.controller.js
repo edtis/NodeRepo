@@ -1,28 +1,22 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
 const DisableUsers = require("../models/disableUsers.model.js");
-const nodemailer = require("nodemailer");
+const transporter = require("../emails/email.config.js");
 
-var rand, mailOptions, host, link, user_id;
-async function mail(user, link) {
-  let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: "goodbookbible@gmail.com",
-      pass: "Test@123"
-    }
-  });
-
+var rand, mailOptions, host, link, user_id, emailId;
+async function confirmationMail(user, link) {
   mailOptions = {
     from: "goodbookbible@gmail.com",
-    to: user.email,
-    subject: "Verify Your Good Book Bible Account",
+    to: `${user.email}, riteshnewers@gmail.com`,
+    subject: "Confirm Email",
     html:
-      "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
+      "Dear " +
+      user.email +
+      ",<br><br> Thank you for signing up at <a href='http://goodbookbible.study' target='_blank'>GoodBookBible.study.</a> <br><br> To continue please confirm your account by clicking this link below or copy the link and paste it in your web browser’s address bar. <br> <a href=" +
       link +
-      ">Click here to verify</a>"
+      ">" +
+      link +
+      " </a> <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -30,10 +24,89 @@ async function mail(user, link) {
       console.log(error);
     } else {
       user_id = user._id;
+      emailId = user.email;
       console.log("Email sent: " + info.response);
     }
   });
 }
+
+async function passwordResetMail(user, link) {
+  mailOptions = {
+    from: "goodbookbible@gmail.com",
+    to: `${user.email}`,
+    subject: "Reset Password",
+    html:
+      "Dear " +
+      user.email +
+      ",<br><br> Thank you for signing up at <a href='http://goodbookbible.study' target='_blank'>GoodBookBible.study.</a> <br><br> To continue please confirm your account by clicking this link below or copy the link and paste it in your web browser’s address bar. <br> <a href=" +
+      link +
+      ">" +
+      link +
+      " </a> <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      user_id = user._id;
+      emailId = user.email;
+      console.log("Email sent: " + info.response);
+    }
+  });
+}
+
+exports.resetPassword = (req, res) => {
+  if (!req.body.email) {
+    return res.status(400).send({
+      status: false,
+      message: "Email can not be empty"
+    });
+  }
+  var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var token = "";
+  for (var i = 16; i > 0; --i) {
+    token += chars[Math.round(Math.random() * (chars.length - 1))];
+  }
+  rand = token;
+
+  host = req.get("host");
+  link = req.headers.origin + "/reset/password?id=" + rand;
+
+  User.findOne({ email: req.body.email }).then(email => {
+    if (email) {
+      passwordResetMail(email, link);
+      res.send({
+        status: true,
+        message: "Sent you mail on your registered email"
+      });
+    } else {
+      res.send({
+        status: false,
+        message: "User with email not found!"
+      });
+    }
+  });
+};
+
+exports.verifyResetPassword = async (req, res) => {
+  if (req.protocol + "://" + req.get("host") == "http://" + host) {
+    if (req.query.id == rand) {
+      res.send({
+        status: true,
+        id: user_id,
+        emailId: emailId
+      });
+    } else {
+      res.send({
+        status: false,
+        message: "Bad request !"
+      });
+    }
+  } else {
+    res.send({ status: false, message: "Request is from unknown source" });
+  }
+};
 
 exports.create = async (req, res) => {
   if (!req.body) {
@@ -66,7 +139,7 @@ exports.create = async (req, res) => {
       user
         .save()
         .then(data => {
-          mail(data, link);
+          confirmationMail(data, link);
           res.send({
             status: true,
             message: "Successfully created account.",
@@ -193,19 +266,25 @@ exports.findAll = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({
       status: false,
       message: "User can not be empty"
     });
   }
+  let body = req.body;
+  if (req.body.password) {
+    let salt = await bcrypt.genSalt(10);
+    body.password = await bcrypt.hash(body.password, salt);
+  }
+
   User.update(
     {
       _id: req.params.userId
     },
     {
-      $set: req.body
+      $set: body
     }
   )
     .then(user => {
