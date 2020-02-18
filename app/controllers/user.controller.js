@@ -7,7 +7,7 @@ var rand, mailOptions, host, link, user_id, emailId;
 async function confirmationMail(user, link) {
   mailOptions = {
     from: "goodbookbible@gmail.com",
-    to: `${user.email}, riteshnewers@gmail.com`,
+    to: `${user.email}`,
     subject: "Confirm Email",
     html:
       "Dear " +
