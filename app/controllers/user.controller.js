@@ -36,13 +36,13 @@ async function passwordResetMail(user, link) {
     to: `${user.email}`,
     subject: "Reset Password",
     html:
-      "Dear " +
+      "Hi " +
       user.email +
-      ",<br><br> Thank you for signing up at <a href='http://goodbookbible.study' target='_blank'>GoodBookBible.study.</a> <br><br> To continue please confirm your account by clicking this link below or copy the link and paste it in your web browser’s address bar. <br> <a href=" +
+      ",<br><br> You have recently sent a request to reset your password. <br> Click the link below to reset your password. <br> <a href=" +
       link +
       ">" +
       link +
-      " </a> <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
+      " </a><br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
