@@ -9,8 +9,8 @@ const UserSchema = mongoose.Schema({
   lastLogin: Date,
   favs: Object,
   notes: Object,
-  Bolded: Object,
-  Underlined: Object,
+  bolded: Object,
+  underlined: Object,
   italicized: Object,
   hightlighted: Object,
   referenceTags: Object
