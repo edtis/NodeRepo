@@ -12,7 +12,7 @@ const UserSchema = mongoose.Schema({
   bolded: Object,
   underlined: Object,
   italicized: Object,
-  hightlighted: Object,
+  highlighted: Object,
   referenceTags: Object
 });
 
