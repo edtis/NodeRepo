@@ -11,8 +11,8 @@ async function confirmationMail(user, link) {
     subject: "Confirm Email",
     html:
       "Dear " +
-      user.email +
-      ",<br><br> Thank you for signing up at <a href='http://goodbookbible.study' target='_blank'>GoodBookBible.study.</a> <br><br> To continue please confirm your account by clicking this link below or copy the link and paste it in your web browser’s address bar. <br> <a href=" +
+      user.firstName +
+      ",<br><br> Thank you for signing up at <a href='http://goodbookbible.study' target='_blank' style='text-decoration: none;'>GoodBookBible.study.</a> <br><br> To continue please confirm your account by clicking this link below or copy the link and paste it in your web browser’s address bar. <br> <a href=" +
       link +
       ">" +
       link +
@@ -37,7 +37,7 @@ async function passwordResetMail(user, link) {
     subject: "Reset Password",
     html:
       "Hi " +
-      user.email +
+      user.firstName +
       ",<br><br> You have recently sent a request to reset your password. <br> Click the link below to reset your password. <br> <a href=" +
       link +
       ">" +
