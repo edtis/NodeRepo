@@ -6,7 +6,7 @@ const transporter = require("../emails/email.config.js");
 var rand, mailOptions, host, link, user_id, emailId;
 async function confirmationMail(user, link) {
   mailOptions = {
-    from: "goodbookbible@gmail.com",
+    from: "support@GoodBookBible.com",
     to: `${user.email}`,
     subject: "Confirm Email",
     html:
@@ -32,7 +32,7 @@ async function confirmationMail(user, link) {
 
 async function passwordResetMail(user, link) {
   mailOptions = {
-    from: "goodbookbible@gmail.com",
+    from: "support@GoodBookBible.com",
     to: `${user.email}`,
     subject: "Reset Password",
     html:
