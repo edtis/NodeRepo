@@ -187,31 +187,6 @@ exports.verify = async (req, res) => {
   }
 };
 
-exports.delete = (req, res) => {
-  User.findByIdAndRemove(req.params.userId)
-    .then(user => {
-      if (!user) {
-        return res.status(404).send({
-          status: false,
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      res.send({ status: true, message: "User deleted successfully!" });
-    })
-    .catch(err => {
-      if (err.kind === "ObjectId" || err.name === "NotFound") {
-        return res.status(404).send({
-          status: false,
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      return res.status(500).send({
-        status: false,
-        message: "Could not delete user with id " + req.params.userId
-      });
-    });
-};
-
 // Find a single user with a email
 exports.findOne = async (req, res) => {
   let { username, password, login } = req.body;
@@ -238,10 +213,10 @@ exports.findOne = async (req, res) => {
               hightlight: user[0].highlighted,
               bold: user[0].bolded,
               underline: user[0].underlined,
-              Italic: user[0].italicized,
-              Notes: user[0].notes,
-              ReferenceTags: user[0].referenceTags,
-              Favorite: user[0].favs
+              italic: user[0].italicized,
+              notes: user[0].notes,
+              referenceTags: user[0].referenceTags,
+              favorite: user[0].favs
             });
           } else {
             return res.status(400).send({
@@ -273,7 +248,185 @@ exports.all = async (req, res) => {
   let { username, databaseID, all } = req.body;
   if (all === true) {
     const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            all: false,
+            error: true,
+            message: "Cannot retrieve data"
+          });
+        } else {
+          res.send({
+            auth: user[0].confirmedEmail,
+            error: false,
+            message: "Retrieve data successfully",
+            databaseID: user[0]._id,
+            hightlight: user[0].highlighted,
+            bold: user[0].bolded,
+            underline: user[0].underlined,
+            Italic: user[0].italicized,
+            notes: user[0].notes,
+            referenceTags: user[0].referenceTags,
+            favorite: user[0].favs
+          });
+        }
+      })
+      .catch(err => {
+        return res.status(500).send({
+          all: false,
+          error: true,
+          message: "Cannot retrieve data"
+        });
+      });
+  } else {
+    res.send({
+      all: false,
+      error: true,
+      message: "Cannot retrieve data"
+    });
+  }
+};
+
+exports.highlight = async (req, res) => {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      highlight: false,
+      error: true,
+      message: "Highlight can not be empty"
+    });
+  }
+  let {
+    highlight,
+    username,
+    databaseID,
+    book,
+    chapter,
+    verse,
+    color
+  } = req.body[0];
+  if (highlight === true) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            highlight: false,
+            error: true,
+            message: "Verse not highlighted"
+          });
+        } else {
+          let highlighted = user[0].highlighted;
+          let results = highlighted.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse &&
+              entry.color === color
+            );
+          });
+          if (results.length > 0) {
+            res.send({
+              highlight: true
+            });
+          } else {
+            res.send({
+              highlight: false,
+              error: true,
+              message: "Verse not highlighted"
+            });
+          }
+        }
+      })
+      .catch(err => {
+        return res.status(500).send({
+          highlight: false,
+          error: true,
+          message: "Verse not highlighted"
+        });
+      });
+  } else {
+    res.send({
+      highlight: false,
+      error: true,
+      message: "Verse not highlighted"
+    });
+  }
+};
+
+exports.bold = async (req, res) => {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      bold: false,
+      error: true,
+      message: "Bolded can not be empty"
+    });
+  }
+  let { bold, username, databaseID, book, chapter, verse } = req.body[0];
+  if (bold === true) {
+    const data = {
       email: username
+      //_id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            bold: false,
+            error: true,
+            message: "Verse not bolded"
+          });
+        } else {
+          let bold = user[0].bold;
+          let results = bold.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse
+            );
+          });
+
+          if (results.length > 0) {
+            res.send({
+              bold: true
+            });
+          } else {
+            res.send({
+              bold: false,
+              error: true,
+              message: "Verse not bolded"
+            });
+          }
+        }
+      })
+      .catch(err => {
+        return res.status(500).send({
+          bold: false,
+          error: true,
+          message: "Verse not bolded"
+        });
+      });
+  } else {
+    res.send({
+      bold: false,
+      error: true,
+      message: "Verse not bolded"
+    });
+  }
+};
+
+exports.underline = async (req, res) => {
+  let { username, databaseID, all } = req.body;
+  if (all === true) {
+    const data = {
+      email: username,
+      _id: databaseID
     };
     User.find(data)
       .then(user => {
@@ -315,79 +468,190 @@ exports.all = async (req, res) => {
   }
 };
 
-exports.findAll = (req, res) => {
-  User.find()
-    .then(data => {
-      let confirmedEmail = [];
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].confirmedEmail === false) {
-          confirmedEmail.push({
-            userID: data[i]._id,
-            userEmail: data[i].email,
-            signUpDate: data[i].created,
-            confirmed: data[i].confirmedEmail
+exports.referencetags = async (req, res) => {
+  let { username, databaseID, all } = req.body;
+  if (all === true) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            all: false,
+            error: true,
+            message: "Cannot retrieve data"
+          });
+        } else {
+          res.send({
+            auth: user[0].confirmedEmail,
+            error: false,
+            message: "Retrieve data successfully",
+            databaseID: user[0]._id,
+            hightlight: user[0].highlighted,
+            bold: user[0].bolded,
+            underline: user[0].underlined,
+            Italic: user[0].italicized,
+            Notes: user[0].notes,
+            ReferenceTags: user[0].referenceTags,
+            Favorite: user[0].favs
           });
         }
-      }
-      res.send({
-        status: true,
-        message: "Fetched all users successfully!",
-        users: data,
-        confirmedEmail: confirmedEmail
+      })
+      .catch(err => {
+        return res.status(500).send({
+          all: false,
+          error: true,
+          message: "Cannot retrieve data"
+        });
       });
-    })
-    .catch(err => {
-      res.status(500).send({
-        status: false,
-        message: err.message || "Some error occurred while retrieving users."
-      });
+  } else {
+    res.send({
+      all: false,
+      error: true,
+      message: "Cannot retrieve data"
     });
+  }
 };
 
-exports.update = async (req, res) => {
-  if (!req.body) {
-    return res.status(400).send({
-      status: false,
-      message: "User can not be empty"
+exports.italic = async (req, res) => {
+  let { username, databaseID, all } = req.body;
+  if (all === true) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            all: false,
+            error: true,
+            message: "Cannot retrieve data"
+          });
+        } else {
+          res.send({
+            auth: user[0].confirmedEmail,
+            error: false,
+            message: "Retrieve data successfully",
+            databaseID: user[0]._id,
+            hightlight: user[0].highlighted,
+            bold: user[0].bolded,
+            underline: user[0].underlined,
+            Italic: user[0].italicized,
+            Notes: user[0].notes,
+            ReferenceTags: user[0].referenceTags,
+            Favorite: user[0].favs
+          });
+        }
+      })
+      .catch(err => {
+        return res.status(500).send({
+          all: false,
+          error: true,
+          message: "Cannot retrieve data"
+        });
+      });
+  } else {
+    res.send({
+      all: false,
+      error: true,
+      message: "Cannot retrieve data"
     });
   }
-  let body = req.body;
-  if (req.body.password) {
-    let salt = await bcrypt.genSalt(10);
-    body.password = await bcrypt.hash(body.password, salt);
-  }
+};
 
-  User.update(
-    {
-      _id: req.params.userId
-    },
-    {
-      $set: body
-    }
-  )
-    .then(user => {
-      if (!user) {
-        return res.status(404).send({
-          status: false,
-          message: "User not found with id " + req.params.userId
+exports.favorite = async (req, res) => {
+  let { username, databaseID, all } = req.body;
+  if (all === true) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            all: false,
+            error: true,
+            message: "Cannot retrieve data"
+          });
+        } else {
+          res.send({
+            auth: user[0].confirmedEmail,
+            error: false,
+            message: "Retrieve data successfully",
+            databaseID: user[0]._id,
+            hightlight: user[0].highlighted,
+            bold: user[0].bolded,
+            underline: user[0].underlined,
+            Italic: user[0].italicized,
+            Notes: user[0].notes,
+            ReferenceTags: user[0].referenceTags,
+            Favorite: user[0].favs
+          });
+        }
+      })
+      .catch(err => {
+        return res.status(500).send({
+          all: false,
+          error: true,
+          message: "Cannot retrieve data"
         });
-      }
-      res.send({
-        status: true,
-        message: "User updated successfully",
-        user: user
       });
-    })
-    .catch(err => {
-      if (err.kind === "ObjectId") {
-        return res.status(404).send({
-          status: false,
-          message: "User not found with id " + req.params.userId
-        });
-      }
-      return res.status(500).send({
-        status: false,
-        message: "Error updating user with id " + err
-      });
+  } else {
+    res.send({
+      all: false,
+      error: true,
+      message: "Cannot retrieve data"
     });
+  }
+};
+
+exports.notes = async (req, res) => {
+  let { username, databaseID, all } = req.body;
+  if (all === true) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        if (user.length === 0) {
+          return res.status(404).send({
+            all: false,
+            error: true,
+            message: "Cannot retrieve data"
+          });
+        } else {
+          res.send({
+            auth: user[0].confirmedEmail,
+            error: false,
+            message: "Retrieve data successfully",
+            databaseID: user[0]._id,
+            hightlight: user[0].highlighted,
+            bold: user[0].bolded,
+            underline: user[0].underlined,
+            Italic: user[0].italicized,
+            Notes: user[0].notes,
+            ReferenceTags: user[0].referenceTags,
+            Favorite: user[0].favs
+          });
+        }
+      })
+      .catch(err => {
+        return res.status(500).send({
+          all: false,
+          error: true,
+          message: "Cannot retrieve data"
+        });
+      });
+  } else {
+    res.send({
+      all: false,
+      error: true,
+      message: "Cannot retrieve data"
+    });
+  }
 };

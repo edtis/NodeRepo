@@ -27,12 +27,12 @@ module.exports = app => {
 
   app.post("/mobile/register", user.create);
   app.post("/mobile/login", user.findOne);
-  app.get("/mobile/all", user.all);
-  app.get("/mobile/highlight", user.findAll);
-  app.get("/mobile/bold", user.findAll);
-  app.get("/mobile/underline", user.findAll);
-  app.get("/mobile/referencetags", user.findAll);
-  app.get("/mobile/italic", user.findAll);
-  app.get("/mobile/favorite", user.findAll);
-  app.get("/mobile/notes", user.findAll);
+  app.post("/mobile/all", user.all);
+  app.post("/mobile/highlight", user.highlight);
+  app.post("/mobile/bold", user.bold);
+  app.post("/mobile/underline", user.underline);
+  app.post("/mobile/referencetags", user.referencetags);
+  app.post("/mobile/italic", user.italic);
+  app.post("/mobile/favorite", user.favorite);
+  app.post("/mobile/notes", user.notes);
 };
