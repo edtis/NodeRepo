@@ -371,8 +371,8 @@ exports.bold = async (req, res) => {
   let { bold, username, databaseID, book, chapter, verse } = req.body[0];
   if (bold === true) {
     const data = {
-      email: username
-      //_id: databaseID
+      email: username,
+      _id: databaseID
     };
     User.find(data)
       .then(user => {
@@ -383,8 +383,8 @@ exports.bold = async (req, res) => {
             message: "Verse not bolded"
           });
         } else {
-          let bold = user[0].bold;
-          let results = bold.filter(function(entry) {
+          let bolded = user[0].bolded;
+          let results = bolded.filter(function(entry) {
             return (
               entry.book === book &&
               entry.chapter === chapter &&
@@ -422,8 +422,15 @@ exports.bold = async (req, res) => {
 };
 
 exports.underline = async (req, res) => {
-  let { username, databaseID, all } = req.body;
-  if (all === true) {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      underlined: false,
+      error: true,
+      message: "Underlined can not be empty"
+    });
+  }
+  let { underlined, username, databaseID, book, chapter, verse } = req.body[0];
+  if (underlined === true) {
     const data = {
       email: username,
       _id: databaseID
@@ -432,38 +439,44 @@ exports.underline = async (req, res) => {
       .then(user => {
         if (user.length === 0) {
           return res.status(404).send({
-            all: false,
+            underlined: false,
             error: true,
-            message: "Cannot retrieve data"
+            message: "Verse not underlined"
           });
         } else {
-          res.send({
-            auth: user[0].confirmedEmail,
-            error: false,
-            message: "Retrieve data successfully",
-            databaseID: user[0]._id,
-            hightlight: user[0].highlighted,
-            bold: user[0].bolded,
-            underline: user[0].underlined,
-            Italic: user[0].italicized,
-            Notes: user[0].notes,
-            ReferenceTags: user[0].referenceTags,
-            Favorite: user[0].favs
+          let underlined = user[0].underlined;
+          let results = underlined.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse
+            );
           });
+          if (results.length > 0) {
+            res.send({
+              underlined: true
+            });
+          } else {
+            res.send({
+              underlined: false,
+              error: true,
+              message: "Verse not underlined"
+            });
+          }
         }
       })
       .catch(err => {
         return res.status(500).send({
-          all: false,
+          underlined: false,
           error: true,
-          message: "Cannot retrieve data"
+          message: "Verse not underlined"
         });
       });
   } else {
     res.send({
-      all: false,
+      underlined: false,
       error: true,
-      message: "Cannot retrieve data"
+      message: "Verse not underlined"
     });
   }
 };
@@ -516,55 +529,76 @@ exports.referencetags = async (req, res) => {
 };
 
 exports.italic = async (req, res) => {
-  let { username, databaseID, all } = req.body;
-  if (all === true) {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      italic: false,
+      error: true,
+      message: "Italic can not be empty"
+    });
+  }
+  let { italic, username, databaseID, book, chapter, verse } = req.body[0];
+  if (italic === true) {
     const data = {
       email: username,
       _id: databaseID
     };
     User.find(data)
       .then(user => {
+        res.send(user);
         if (user.length === 0) {
           return res.status(404).send({
-            all: false,
+            italic: false,
             error: true,
-            message: "Cannot retrieve data"
+            message: "Verse not italic"
           });
         } else {
-          res.send({
-            auth: user[0].confirmedEmail,
-            error: false,
-            message: "Retrieve data successfully",
-            databaseID: user[0]._id,
-            hightlight: user[0].highlighted,
-            bold: user[0].bolded,
-            underline: user[0].underlined,
-            Italic: user[0].italicized,
-            Notes: user[0].notes,
-            ReferenceTags: user[0].referenceTags,
-            Favorite: user[0].favs
+          let italicized = user[0].italicized;
+          let results = italicized.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse
+            );
           });
+          if (results.length > 0) {
+            res.send({
+              italic: true
+            });
+          } else {
+            res.send({
+              italic: false,
+              error: true,
+              message: "Verse not italic1"
+            });
+          }
         }
       })
       .catch(err => {
         return res.status(500).send({
-          all: false,
+          italic: false,
           error: true,
-          message: "Cannot retrieve data"
+          message: "Verse not italic"
         });
       });
   } else {
     res.send({
-      all: false,
+      italic: false,
       error: true,
-      message: "Cannot retrieve data"
+      message: "Verse not italic"
     });
   }
 };
 
 exports.favorite = async (req, res) => {
-  let { username, databaseID, all } = req.body;
-  if (all === true) {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      favorite: false,
+      error: true,
+      message: "Favorite can not be empty"
+    });
+  }
+  let { favorite, username, databaseID, book, chapter, verse } = req.body[0];
+  if (favorite === true) {
     const data = {
       email: username,
       _id: databaseID
@@ -573,85 +607,105 @@ exports.favorite = async (req, res) => {
       .then(user => {
         if (user.length === 0) {
           return res.status(404).send({
-            all: false,
+            favorite: false,
             error: true,
-            message: "Cannot retrieve data"
+            message: "Verse not favorite"
           });
         } else {
-          res.send({
-            auth: user[0].confirmedEmail,
-            error: false,
-            message: "Retrieve data successfully",
-            databaseID: user[0]._id,
-            hightlight: user[0].highlighted,
-            bold: user[0].bolded,
-            underline: user[0].underlined,
-            Italic: user[0].italicized,
-            Notes: user[0].notes,
-            ReferenceTags: user[0].referenceTags,
-            Favorite: user[0].favs
+          let favs = user[0].favs;
+          let results = favs.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse
+            );
           });
+          if (results.length > 0) {
+            res.send({
+              favorite: true
+            });
+          } else {
+            res.send({
+              favorite: false,
+              error: true,
+              message: "Verse not favorite"
+            });
+          }
         }
       })
       .catch(err => {
         return res.status(500).send({
-          all: false,
+          favorite: false,
           error: true,
-          message: "Cannot retrieve data"
+          message: "Verse not favorite"
         });
       });
   } else {
     res.send({
-      all: false,
+      favorite: false,
       error: true,
-      message: "Cannot retrieve data"
+      message: "Verse not favorite"
     });
   }
 };
 
 exports.notes = async (req, res) => {
-  let { username, databaseID, all } = req.body;
-  if (all === true) {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      note: false,
+      error: true,
+      message: "Note can not be empty"
+    });
+  }
+  let { note, username, databaseID, book, chapter, verse } = req.body[0];
+  if (note === true) {
     const data = {
       email: username,
       _id: databaseID
     };
     User.find(data)
       .then(user => {
+        //res.send(user);
         if (user.length === 0) {
           return res.status(404).send({
-            all: false,
+            note: false,
             error: true,
-            message: "Cannot retrieve data"
+            message: "Verse not note"
           });
         } else {
-          res.send({
-            auth: user[0].confirmedEmail,
-            error: false,
-            message: "Retrieve data successfully",
-            databaseID: user[0]._id,
-            hightlight: user[0].highlighted,
-            bold: user[0].bolded,
-            underline: user[0].underlined,
-            Italic: user[0].italicized,
-            Notes: user[0].notes,
-            ReferenceTags: user[0].referenceTags,
-            Favorite: user[0].favs
+          let notes = user[0].notes;
+          let results = notes.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse
+            );
           });
+          if (results.length > 0) {
+            res.send({
+              note: true
+            });
+          } else {
+            res.send({
+              note: false,
+              error: true,
+              message: "Verse not note"
+            });
+          }
         }
       })
       .catch(err => {
         return res.status(500).send({
-          all: false,
+          note: false,
           error: true,
-          message: "Cannot retrieve data"
+          message: "Verse not note"
         });
       });
   } else {
     res.send({
-      all: false,
+      note: false,
       error: true,
-      message: "Cannot retrieve data"
+      message: "Verse not note"
     });
   }
 };
