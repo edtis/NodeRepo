@@ -292,56 +292,37 @@ exports.all = async (req, res) => {
 };
 
 exports.highlight = async (req, res) => {
-  if (req.body.length === 0) {
+  let { highlight, username, databaseID, highlighted } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       highlight: false,
       error: true,
       message: "Highlight can not be empty"
     });
   }
-  let {
-    highlight,
-    username,
-    databaseID,
-    book,
-    chapter,
-    verse,
-    color
-  } = req.body[0];
-  if (highlight === true) {
+  if (highlight === true && highlighted) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { highlighted: highlighted }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        if (user.length === 0) {
-          return res.status(404).send({
-            highlight: false,
-            error: true,
-            message: "Verse not highlighted"
+        if (user.nModified) {
+          res.send({
+            highlight: true
           });
         } else {
-          let highlighted = user[0].highlighted;
-          let results = highlighted.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse &&
-              entry.color === color
-            );
+          res.send({
+            highlight: false,
+            error: true,
+            message: "Verse already highlighted"
           });
-          if (results.length > 0) {
-            res.send({
-              highlight: true
-            });
-          } else {
-            res.send({
-              highlight: false,
-              error: true,
-              message: "Verse not highlighted"
-            });
-          }
         }
       })
       .catch(err => {
@@ -369,7 +350,7 @@ exports.bold = async (req, res) => {
       message: "Bolded can not be empty"
     });
   }
-  if (bold === true) {
+  if (bold === true && bolded) {
     const data = {
       email: username,
       _id: databaseID
@@ -411,47 +392,37 @@ exports.bold = async (req, res) => {
 };
 
 exports.underline = async (req, res) => {
-  if (req.body.length === 0) {
+  let { underline, username, databaseID, underlined } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       underlined: false,
       error: true,
       message: "Underlined can not be empty"
     });
   }
-  let { underlined, username, databaseID, book, chapter, verse } = req.body[0];
-  if (underlined === true) {
+  if (underline === true && underlined) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { underlined: underlined }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        if (user.length === 0) {
-          return res.status(404).send({
-            underlined: false,
-            error: true,
-            message: "Verse not underlined"
+        if (user.nModified) {
+          res.send({
+            underlined: true
           });
         } else {
-          let underlined = user[0].underlined;
-          let results = underlined.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse
-            );
+          res.send({
+            underlined: false,
+            error: true,
+            message: "Verse already underlined"
           });
-          if (results.length > 0) {
-            res.send({
-              underlined: true
-            });
-          } else {
-            res.send({
-              underlined: false,
-              error: true,
-              message: "Verse not underlined"
-            });
-          }
         }
       })
       .catch(err => {
@@ -471,54 +442,37 @@ exports.underline = async (req, res) => {
 };
 
 exports.referencetags = async (req, res) => {
-  if (req.body.length === 0) {
+  let { referenceTag, username, databaseID, referenceTags } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       referenceTags: false,
       error: true,
       message: "ReferenceTags can not be empty"
     });
   }
-  let {
-    referenceTags,
-    username,
-    databaseID,
-    book,
-    chapter,
-    verse
-  } = req.body[0];
-  if (referenceTags === true) {
+  if (referenceTag === true && referenceTags) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { referenceTags: referenceTags }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        if (user.length === 0) {
-          return res.status(404).send({
-            referenceTags: false,
-            error: true,
-            message: "Reference Tag not applied"
+        if (user.nModified) {
+          res.send({
+            referenceTags: true
           });
         } else {
-          let referenceTags = user[0].referenceTags;
-          let results = referenceTags.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse
-            );
+          res.send({
+            referenceTags: false,
+            error: true,
+            message: "Reference Tag already applied"
           });
-          if (results.length > 0) {
-            res.send({
-              referenceTags: true
-            });
-          } else {
-            res.send({
-              referenceTags: false,
-              error: true,
-              message: "Reference Tag not applied"
-            });
-          }
         }
       })
       .catch(err => {
@@ -538,48 +492,37 @@ exports.referencetags = async (req, res) => {
 };
 
 exports.italic = async (req, res) => {
-  if (req.body.length === 0) {
+  let { italic, username, databaseID, italicized } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       italic: false,
       error: true,
       message: "Italic can not be empty"
     });
   }
-  let { italic, username, databaseID, book, chapter, verse } = req.body[0];
-  if (italic === true) {
+  if (italic === true && italicized) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { italicized: italicized }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        res.send(user);
-        if (user.length === 0) {
-          return res.status(404).send({
-            italic: false,
-            error: true,
-            message: "Verse not italic"
+        if (user.nModified) {
+          res.send({
+            italic: true
           });
         } else {
-          let italicized = user[0].italicized;
-          let results = italicized.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse
-            );
+          res.send({
+            italic: false,
+            error: true,
+            message: "Verse already italic"
           });
-          if (results.length > 0) {
-            res.send({
-              italic: true
-            });
-          } else {
-            res.send({
-              italic: false,
-              error: true,
-              message: "Verse not italic1"
-            });
-          }
         }
       })
       .catch(err => {
@@ -599,47 +542,37 @@ exports.italic = async (req, res) => {
 };
 
 exports.favorite = async (req, res) => {
-  if (req.body.length === 0) {
+  let { favorite, username, databaseID, favs } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       favorite: false,
       error: true,
       message: "Favorite can not be empty"
     });
   }
-  let { favorite, username, databaseID, book, chapter, verse } = req.body[0];
-  if (favorite === true) {
+  if (favorite === true && favs) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { favs: favs }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        if (user.length === 0) {
-          return res.status(404).send({
-            favorite: false,
-            error: true,
-            message: "Verse not favorite"
+        if (user.nModified) {
+          res.send({
+            favorite: true
           });
         } else {
-          let favs = user[0].favs;
-          let results = favs.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse
-            );
+          res.send({
+            favorite: false,
+            error: true,
+            message: "Verse already favorited"
           });
-          if (results.length > 0) {
-            res.send({
-              favorite: true
-            });
-          } else {
-            res.send({
-              favorite: false,
-              error: true,
-              message: "Verse not favorite"
-            });
-          }
         }
       })
       .catch(err => {
@@ -659,47 +592,37 @@ exports.favorite = async (req, res) => {
 };
 
 exports.notes = async (req, res) => {
-  if (req.body.length === 0) {
+  let { note, username, databaseID, notes } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       note: false,
       error: true,
       message: "Note can not be empty"
     });
   }
-  let { note, username, databaseID, book, chapter, verse } = req.body[0];
-  if (note === true) {
+  if (note === true && notes) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { notes: notes }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        if (user.length === 0) {
-          return res.status(404).send({
-            note: false,
-            error: true,
-            message: "Verse not note"
+        if (user.nModified) {
+          res.send({
+            note: true
           });
         } else {
-          let notes = user[0].notes;
-          let results = notes.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse
-            );
+          res.send({
+            note: false,
+            error: true,
+            message: "Verse already noted"
           });
-          if (results.length > 0) {
-            res.send({
-              note: true
-            });
-          } else {
-            res.send({
-              note: false,
-              error: true,
-              message: "Verse not note"
-            });
-          }
         }
       })
       .catch(err => {
