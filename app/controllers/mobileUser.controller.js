@@ -361,48 +361,37 @@ exports.highlight = async (req, res) => {
 };
 
 exports.bold = async (req, res) => {
-  if (req.body.length === 0) {
+  let { bold, username, databaseID, bolded } = req.body;
+  if (Object.keys(req.body).length === 0) {
     return res.status(400).send({
       bold: false,
       error: true,
       message: "Bolded can not be empty"
     });
   }
-  let { bold, username, databaseID, book, chapter, verse } = req.body[0];
   if (bold === true) {
     const data = {
       email: username,
       _id: databaseID
     };
-    User.find(data)
+    User.update(
+      data,
+      {
+        $set: { bolded: bolded }
+      },
+      { upsert: true }
+    )
       .then(user => {
-        if (user.length === 0) {
-          return res.status(404).send({
-            bold: false,
-            error: true,
-            message: "Verse not bolded"
+        if (user.nModified) {
+          res.send({
+            bold: true
           });
         } else {
-          let bolded = user[0].bolded;
-          let results = bolded.filter(function(entry) {
-            return (
-              entry.book === book &&
-              entry.chapter === chapter &&
-              entry.verse === verse
-            );
+          res.send({
+            bold: false,
+            error: true,
+            message: "Verse already bolded"
           });
-
-          if (results.length > 0) {
-            res.send({
-              bold: true
-            });
-          } else {
-            res.send({
-              bold: false,
-              error: true,
-              message: "Verse not bolded"
-            });
-          }
         }
       })
       .catch(err => {
@@ -482,8 +471,22 @@ exports.underline = async (req, res) => {
 };
 
 exports.referencetags = async (req, res) => {
-  let { username, databaseID, all } = req.body;
-  if (all === true) {
+  if (req.body.length === 0) {
+    return res.status(400).send({
+      referenceTags: false,
+      error: true,
+      message: "ReferenceTags can not be empty"
+    });
+  }
+  let {
+    referenceTags,
+    username,
+    databaseID,
+    book,
+    chapter,
+    verse
+  } = req.body[0];
+  if (referenceTags === true) {
     const data = {
       email: username,
       _id: databaseID
@@ -492,38 +495,44 @@ exports.referencetags = async (req, res) => {
       .then(user => {
         if (user.length === 0) {
           return res.status(404).send({
-            all: false,
+            referenceTags: false,
             error: true,
-            message: "Cannot retrieve data"
+            message: "Reference Tag not applied"
           });
         } else {
-          res.send({
-            auth: user[0].confirmedEmail,
-            error: false,
-            message: "Retrieve data successfully",
-            databaseID: user[0]._id,
-            hightlight: user[0].highlighted,
-            bold: user[0].bolded,
-            underline: user[0].underlined,
-            Italic: user[0].italicized,
-            Notes: user[0].notes,
-            ReferenceTags: user[0].referenceTags,
-            Favorite: user[0].favs
+          let referenceTags = user[0].referenceTags;
+          let results = referenceTags.filter(function(entry) {
+            return (
+              entry.book === book &&
+              entry.chapter === chapter &&
+              entry.verse === verse
+            );
           });
+          if (results.length > 0) {
+            res.send({
+              referenceTags: true
+            });
+          } else {
+            res.send({
+              referenceTags: false,
+              error: true,
+              message: "Reference Tag not applied"
+            });
+          }
         }
       })
       .catch(err => {
         return res.status(500).send({
-          all: false,
+          referenceTags: false,
           error: true,
-          message: "Cannot retrieve data"
+          message: "Reference Tag not applied"
         });
       });
   } else {
     res.send({
-      all: false,
+      referenceTags: false,
       error: true,
-      message: "Cannot retrieve data"
+      message: "Reference Tag not applied"
     });
   }
 };
@@ -665,7 +674,6 @@ exports.notes = async (req, res) => {
     };
     User.find(data)
       .then(user => {
-        //res.send(user);
         if (user.length === 0) {
           return res.status(404).send({
             note: false,
@@ -708,4 +716,52 @@ exports.notes = async (req, res) => {
       message: "Verse not note"
     });
   }
+};
+
+exports.update = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      status: false,
+      message: "User can not be empty"
+    });
+  }
+  let body = req.body;
+  if (req.body.password) {
+    let salt = await bcrypt.genSalt(10);
+    body.password = await bcrypt.hash(body.password, salt);
+  }
+
+  User.update(
+    {
+      _id: req.params.userId
+    },
+    {
+      $set: body
+    }
+  )
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({
+          status: false,
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      res.send({
+        status: true,
+        message: "User updated successfully",
+        user: user
+      });
+    })
+    .catch(err => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          status: false,
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      return res.status(500).send({
+        status: false,
+        message: "Error updating user with id " + err
+      });
+    });
 };
