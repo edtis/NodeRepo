@@ -9,20 +9,39 @@ exports.create = async (req, res) => {
   }
 
   let user = new Website(req.body);
-  user
-    .save()
+  Website.find()
     .then(data => {
-      res.send({
-        status: true,
-        message: "Website alert created successfully!",
-        data: data
-      });
+      if (data.length < 1) {
+        user
+          .save()
+          .then(data => {
+            res.send({
+              status: true,
+              message: "Website alert created successfully!",
+              data: data
+            });
+          })
+          .catch(err => {
+            res.status(500).send({
+              status: false,
+              message:
+                err.message ||
+                "Some error occurred while creating the website alert."
+            });
+          });
+      } else {
+        res.send({
+          status: true,
+          message: "Alert already exist!",
+          data: data
+        });
+      }
     })
     .catch(err => {
       res.status(500).send({
         status: false,
         message:
-          err.message || "Some error occurred while creating the website alert."
+          err.message || "Some error occurred while creating website alert."
       });
     });
 };

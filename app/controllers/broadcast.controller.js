@@ -9,21 +9,38 @@ exports.create = async (req, res) => {
   }
 
   let user = new Broadcast(req.body);
-  user
-    .save()
+  Broadcast.find()
     .then(data => {
-      res.send({
-        status: true,
-        message: "Broadcast created successfully!",
-        data: data
-      });
+      if (data.length < 1) {
+        user
+          .save()
+          .then(data => {
+            res.send({
+              status: true,
+              message: "Broadcast created successfully!",
+              data: data
+            });
+          })
+          .catch(err => {
+            res.status(500).send({
+              status: false,
+              message:
+                err.message ||
+                "Some error occurred while creating the broadcast alert."
+            });
+          });
+      } else {
+        res.send({
+          status: true,
+          message: "Alert already exist!",
+          data: data
+        });
+      }
     })
     .catch(err => {
       res.status(500).send({
         status: false,
-        message:
-          err.message ||
-          "Some error occurred while creating the broadcast alert."
+        message: err.message || "Some error occurred while creating broadcast."
       });
     });
 };
