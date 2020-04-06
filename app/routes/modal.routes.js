@@ -23,17 +23,9 @@ module.exports = app => {
     // Pass to next layer of middleware
     next();
   });
-  const user = require("../controllers/user.controller.js");
+  const modal = require("../controllers/modal.controller.js");
 
-  app.post("/user", user.create);
-  app.post("/login", user.findOne);
-  app.get("/user/:userId", user.findOneById);
-  app.get("/users", user.findAll);
-  app.put("/user/:userId", user.update);
-  app.put("/disable/users", user.disableUsersUpdate);
-  app.get("/users/status", user.usersStatus);
-  app.delete("/user/:userId", user.delete);
-  app.get("/verify", user.verify);
-  app.post("/password/reset", user.resetPassword);
-  app.get("/verify/reset/password", user.verifyResetPassword);
+  app.post("/modal/create", modal.create);
+  app.get("/modals", modal.findAll);
+  app.delete("/modal/delete/:modalId", modal.delete);
 };

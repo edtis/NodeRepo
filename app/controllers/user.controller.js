@@ -237,6 +237,34 @@ exports.findOne = async (req, res) => {
     });
 };
 
+exports.findOneById = (req, res) => {
+  User.findById(req.params.userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      res.send({
+        status: true,
+        message: "Sync success",
+        data: user
+      });
+    })
+    .catch(err => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          status: false,
+          message: "User not found with id " + req.params.userId
+        });
+      }
+      return res.status(500).send({
+        status: false,
+        message: "Internal server error!"
+      });
+    });
+};
+
 exports.findAll = (req, res) => {
   User.find()
     .then(data => {
