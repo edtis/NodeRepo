@@ -217,6 +217,20 @@ exports.findOne = async (req, res) => {
       }
       bcrypt.compare(password, user[0].password).then(function(result) {
         if (result) {
+          const highlighted = Array.isArray(user[0].highlighted);
+          const bolded = Array.isArray(user[0].bolded);
+          const underlined = Array.isArray(user[0].underlined);
+          const italicized = Array.isArray(user[0].italicized);
+          const notes = Array.isArray(user[0].notes);
+          const referenceTags = Array.isArray(user[0].referenceTags);
+          const favs = Array.isArray(user[0].favs);
+          user[0].highlighted = highlighted ? user[0].highlighted : [];
+          user[0].bolded = bolded ? user[0].bolded : [];
+          user[0].underlined = underlined ? user[0].underlined : [];
+          user[0].italicized = italicized ? user[0].italicized : [];
+          user[0].notes = notes ? user[0].notes : [];
+          user[0].referenceTags = referenceTags ? user[0].referenceTags : [];
+          user[0].favs = favs ? user[0].favs : [];
           res.send({
             status: true,
             message: "Logged in success",
@@ -245,6 +259,20 @@ exports.findOneById = (req, res) => {
           message: "User not found with id " + req.params.userId
         });
       }
+      const highlighted = Array.isArray(user.highlighted);
+      const bolded = Array.isArray(user.bolded);
+      const underlined = Array.isArray(user.underlined);
+      const italicized = Array.isArray(user.italicized);
+      const notes = Array.isArray(user.notes);
+      const referenceTags = Array.isArray(user.referenceTags);
+      const favs = Array.isArray(user.favs);
+      user.highlighted = highlighted ? user.highlighted : [];
+      user.bolded = bolded ? user.bolded : [];
+      user.underlined = underlined ? user.underlined : [];
+      user.italicized = italicized ? user.italicized : [];
+      user.notes = notes ? user.notes : [];
+      user.referenceTags = referenceTags ? user.referenceTags : [];
+      user.favs = favs ? user.favs : [];
       res.send({
         status: true,
         message: "Sync success",

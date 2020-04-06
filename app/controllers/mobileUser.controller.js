@@ -205,18 +205,25 @@ exports.findOne = async (req, res) => {
         }
         bcrypt.compare(password, user[0].password).then(function(result) {
           if (result) {
+            const highlighted = Array.isArray(user[0].highlighted);
+            const bolded = Array.isArray(user[0].bolded);
+            const underlined = Array.isArray(user[0].underlined);
+            const italicized = Array.isArray(user[0].italicized);
+            const notes = Array.isArray(user[0].notes);
+            const referenceTags = Array.isArray(user[0].referenceTags);
+            const favs = Array.isArray(user[0].favs);
             res.send({
               auth: user[0].confirmedEmail,
               error: false,
               message: "Logged in successfully",
               databaseID: user[0]._id,
-              hightlight: user[0].highlighted,
-              bold: user[0].bolded,
-              underline: user[0].underlined,
-              italic: user[0].italicized,
-              notes: user[0].notes,
-              referenceTags: user[0].referenceTags,
-              favorite: user[0].favs
+              hightlight: highlighted ? user[0].highlighted : [],
+              bold: bolded ? user[0].bolded : [],
+              underline: underlined ? user[0].underlined : [],
+              Italic: italicized ? user[0].italicized : [],
+              notes: notes ? user[0].notes : [],
+              referenceTags: referenceTags ? user[0].referenceTags : [],
+              favorite: favs ? user[0].favs : []
             });
           } else {
             return res.status(400).send({
@@ -260,18 +267,25 @@ exports.all = async (req, res) => {
             message: "Cannot retrieve data"
           });
         } else {
+          const highlighted = Array.isArray(user[0].highlighted);
+          const bolded = Array.isArray(user[0].bolded);
+          const underlined = Array.isArray(user[0].underlined);
+          const italicized = Array.isArray(user[0].italicized);
+          const notes = Array.isArray(user[0].notes);
+          const referenceTags = Array.isArray(user[0].referenceTags);
+          const favs = Array.isArray(user[0].favs);
           res.send({
             auth: user[0].confirmedEmail,
             error: false,
             message: "Retrieve data successfully",
             databaseID: user[0]._id,
-            hightlight: user[0].highlighted,
-            bold: user[0].bolded,
-            underline: user[0].underlined,
-            Italic: user[0].italicized,
-            notes: user[0].notes,
-            referenceTags: user[0].referenceTags,
-            favorite: user[0].favs
+            hightlight: highlighted ? user[0].highlighted : [],
+            bold: bolded ? user[0].bolded : [],
+            underline: underlined ? user[0].underlined : [],
+            Italic: italicized ? user[0].italicized : [],
+            notes: notes ? user[0].notes : [],
+            referenceTags: referenceTags ? user[0].referenceTags : [],
+            favorite: favs ? user[0].favs : []
           });
         }
       })
