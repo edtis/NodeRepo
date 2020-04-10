@@ -3,6 +3,7 @@ const User = require("../models/user.model.js");
 const transporter = require("../emails/email.config.js");
 
 var rand, mailOptions, host, link, user_id, emailId;
+var verificationCode = "tbtxzt738";
 async function confirmationMail(user, link) {
   mailOptions = {
     from: "support@GoodBookBible.com",
@@ -108,6 +109,13 @@ exports.verifyResetPassword = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  if (req.body.verificationCode !== verificationCode) {
+    res.status(500).send({
+      auth: false,
+      error: true,
+      message: "Access denied"
+    });
+  }
   if (req.body.register === true) {
     if (!req.body) {
       return res.status(400).send({

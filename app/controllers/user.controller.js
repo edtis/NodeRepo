@@ -78,7 +78,7 @@ exports.resetPassword = (req, res) => {
       passwordResetMail(email, link);
       res.send({
         status: true,
-        message: "Sent you mail on your registered email"
+        message: "Reset link has been sent to your email"
       });
     } else {
       res.send({
@@ -142,7 +142,7 @@ exports.create = async (req, res) => {
           confirmationMail(data, link);
           res.send({
             status: true,
-            message: "Successfully created account.",
+            message: "Confirmation Email Sent",
             data: data
           });
         })
@@ -217,6 +217,12 @@ exports.findOne = async (req, res) => {
       }
       bcrypt.compare(password, user[0].password).then(function(result) {
         if (result) {
+          if (!user[0].confirmedEmail) {
+            return res.status(200).send({
+              status: false,
+              message: "Please check your email to confirm your account"
+            });
+          }
           const highlighted = Array.isArray(user[0].highlighted);
           const bolded = Array.isArray(user[0].bolded);
           const underlined = Array.isArray(user[0].underlined);
