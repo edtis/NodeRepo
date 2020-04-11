@@ -92,6 +92,7 @@ exports.resetPassword = (req, res) => {
 exports.verifyResetPassword = async (req, res) => {
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
     if (req.query.id == rand) {
+      rand = null;
       res.send({
         status: true,
         id: user_id,
