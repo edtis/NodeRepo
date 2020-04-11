@@ -160,11 +160,28 @@ exports.create = async (req, res) => {
 exports.verify = async (req, res) => {
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
     if (req.query.id == rand) {
-      res.send({
-        status: true,
-        message: mailOptions.to + " has been Successfully verified",
-        id: user_id
-      });
+      User.findById(user_id)
+        .then(user => {
+          if (user.confirmedEmail) {
+            res.send({
+              status: true,
+              message: "Account already confirmed. Link expired",
+              id: user_id
+            });
+          } else {
+            res.send({
+              status: true,
+              message: mailOptions.to + " has been Successfully verified",
+              id: user_id
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            status: false,
+            message: "Internal server error!"
+          });
+        });
     } else {
       res.send({
         status: false,
