@@ -16,7 +16,7 @@ async function confirmationMail(user, link) {
       link +
       ">" +
       link +
-      " </a> <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
+      " </a> <br><br>This link will expire after you click it.<br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -42,7 +42,7 @@ async function passwordResetMail(user, link) {
       link +
       ">" +
       link +
-      " </a><br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
+      " </a><br><br>This link will expire after you click it.<br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
