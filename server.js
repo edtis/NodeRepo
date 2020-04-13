@@ -42,6 +42,6 @@ require("./app/routes/modal.routes.js")(app);
 require("./app/routes/website.routes.js")(app);
 require("./app/routes/mobileUser.routes.js")(app);
 // listen for requests
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
+app.listen(80, () => {
+  console.log("Server is listening on port 80");
 });

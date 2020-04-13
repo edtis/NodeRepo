@@ -17,11 +17,7 @@ async function confirmationMail(user, link) {
       link +
       ">" +
       link +
-<<<<<<< Updated upstream
-      " </a> <br><br>This link will expire after you click it.<br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
-=======
-      " </a> <br><br>This link will expire after you click it. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
->>>>>>> Stashed changes
+      " </a> <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -47,11 +43,7 @@ async function passwordResetMail(user, link) {
       link +
       ">" +
       link +
-<<<<<<< Updated upstream
-      " </a><br><br>This link will expire after you click it.<br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
-=======
-      " </a><br><br>This link will expire after you click it. <br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
->>>>>>> Stashed changes
+      " </a><br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -101,7 +93,6 @@ exports.resetPassword = (req, res) => {
 exports.verifyResetPassword = async (req, res) => {
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
     if (req.query.id == rand) {
-      rand = null;
       res.send({
         status: true,
         id: user_id,
@@ -170,7 +161,7 @@ exports.create = async (req, res) => {
 exports.verify = async (req, res) => {
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
     if (req.query.id == rand) {
-      User.findById(user_id)
+     User.findById(user_id)
         .then(user => {
           if (user.confirmedEmail) {
             res.send({
@@ -191,7 +182,7 @@ exports.verify = async (req, res) => {
             status: false,
             message: "Internal server error!"
           });
-        });
+        }); });
     } else {
       res.send({
         status: false,
@@ -244,21 +235,13 @@ exports.findOne = async (req, res) => {
       }
       bcrypt.compare(password, user[0].password).then(function(result) {
         if (result) {
-<<<<<<< Updated upstream
-          if (!user[0].confirmedEmail) {
-=======
 	  if (!user[0].confirmedEmail) {
->>>>>>> Stashed changes
             return res.status(200).send({
               status: false,
               message: "Please check your email to confirm your account"
             });
           }
-<<<<<<< Updated upstream
-          const highlighted = Array.isArray(user[0].highlighted);
-=======
 	  const highlighted = Array.isArray(user[0].highlighted);
->>>>>>> Stashed changes
           const bolded = Array.isArray(user[0].bolded);
           const underlined = Array.isArray(user[0].underlined);
           const italicized = Array.isArray(user[0].italicized);

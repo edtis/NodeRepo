@@ -9,3 +9,7 @@ const ModalSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Modal", ModalSchema);
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
