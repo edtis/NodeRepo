@@ -177,7 +177,7 @@ exports.create = async (req, res) => {
 };
 
 exports.verify = async (req, res) => {
-  if (req.protocol + "://" + req.get("host") == "http://" + host) {
+  if (req.protocol + "://" + req.get("host") == "https://" + host) {
     if (req.query.id == rand) {
       res.send({
         status: true,
