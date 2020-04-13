@@ -9,10 +9,6 @@ exports.create = async (req, res) => {
   }
 
   let user = new Website(req.body);
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
   Website.find()
     .then(data => {
       if (data.length < 1) {

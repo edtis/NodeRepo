@@ -9,12 +9,8 @@ exports.create = async (req, res) => {
   }
 
   let user = new Broadcast(req.body);
-<<<<<<< Updated upstream
-  Broadcast.find()
-=======
 
-Broadcast.find()
->>>>>>> Stashed changes
+  Broadcast.find()
     .then(data => {
       if (data.length < 1) {
         user

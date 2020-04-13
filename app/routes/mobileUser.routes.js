@@ -2,11 +2,9 @@ module.exports = app => {
   // Add headers
   app.use(function(req, res, next) {
     // Website you wish to allow to connect
-<<<<<<< Updated upstream
-    res.setHeader("Access-Control-Allow-Origin", "https://goodbookbible.study");
-=======
-    res.setHeader("Access-Control-Allow-Origin", ['https://goodbookbible.study']);
->>>>>>> Stashed changes
+    res.setHeader("Access-Control-Allow-Origin", [
+      "https://goodbookbible.study"
+    ]);
 
     // Request methods you wish to allow
     res.setHeader(
@@ -40,7 +38,3 @@ module.exports = app => {
   app.post("/mobile/favorite", user.favorite);
   app.post("/mobile/notes", user.notes);
 };
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes

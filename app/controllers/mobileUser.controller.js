@@ -70,13 +70,8 @@ exports.resetPassword = (req, res) => {
   }
   rand = token;
 
-<<<<<<< Updated upstream
   host = "goodbookbible.study";
   link = "https://goodbookbible.study/reset/password?id=" + rand;
-=======
-  host = req.get("host");
-  link = req.headers.origin + "/reset/password?id=" + rand;
->>>>>>> Stashed changes
 
   User.findOne({ email: req.body.email }).then(email => {
     if (email) {
@@ -137,13 +132,8 @@ exports.create = async (req, res) => {
     }
     rand = token;
 
-<<<<<<< Updated upstream
     host = "goodbookbible.study";
     link = "https://goodbookbible.study/verify?id=" + rand;
-=======
-    host = req.get("host");
-    link = req.headers.origin + "/verify?id=" + rand;
->>>>>>> Stashed changes
     req.body.email = req.body.username;
     delete req.body["username"];
     let user = new User(req.body);
@@ -223,11 +213,7 @@ exports.findOne = async (req, res) => {
         }
         bcrypt.compare(password, user[0].password).then(function(result) {
           if (result) {
-<<<<<<< Updated upstream
             const highlighted = Array.isArray(user[0].highlighted);
-=======
-	    const highlighted = Array.isArray(user[0].highlighted);
->>>>>>> Stashed changes
             const bolded = Array.isArray(user[0].bolded);
             const underlined = Array.isArray(user[0].underlined);
             const italicized = Array.isArray(user[0].italicized);
@@ -242,11 +228,7 @@ exports.findOne = async (req, res) => {
               hightlight: highlighted ? user[0].highlighted : [],
               bold: bolded ? user[0].bolded : [],
               underline: underlined ? user[0].underlined : [],
-<<<<<<< Updated upstream
               Italic: italicized ? user[0].italicized : [],
-=======
-              italic: italicized ? user[0].italicized : [],
->>>>>>> Stashed changes
               notes: notes ? user[0].notes : [],
               referenceTags: referenceTags ? user[0].referenceTags : [],
               favorite: favs ? user[0].favs : []
@@ -293,11 +275,7 @@ exports.all = async (req, res) => {
             message: "Cannot retrieve data"
           });
         } else {
-<<<<<<< Updated upstream
           const highlighted = Array.isArray(user[0].highlighted);
-=======
-	  const highlighted = Array.isArray(user[0].highlighted);
->>>>>>> Stashed changes
           const bolded = Array.isArray(user[0].bolded);
           const underlined = Array.isArray(user[0].underlined);
           const italicized = Array.isArray(user[0].italicized);
@@ -732,7 +710,3 @@ exports.update = async (req, res) => {
       });
     });
 };
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes

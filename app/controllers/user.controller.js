@@ -1,4 +1,3 @@
-
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
 const DisableUsers = require("../models/disableUsers.model.js");
@@ -17,11 +16,7 @@ async function confirmationMail(user, link) {
       link +
       ">" +
       link +
-<<<<<<< Updated upstream
       " </a> <br><br>This link will expire after you click it.<br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
-=======
-      " </a> <br><br>This link will expire after you click it. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
->>>>>>> Stashed changes
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -47,11 +42,7 @@ async function passwordResetMail(user, link) {
       link +
       ">" +
       link +
-<<<<<<< Updated upstream
       " </a><br><br>This link will expire after you click it.<br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
-=======
-      " </a><br><br>This link will expire after you click it. <br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
->>>>>>> Stashed changes
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -244,21 +235,13 @@ exports.findOne = async (req, res) => {
       }
       bcrypt.compare(password, user[0].password).then(function(result) {
         if (result) {
-<<<<<<< Updated upstream
           if (!user[0].confirmedEmail) {
-=======
-	  if (!user[0].confirmedEmail) {
->>>>>>> Stashed changes
             return res.status(200).send({
               status: false,
               message: "Please check your email to confirm your account"
             });
           }
-<<<<<<< Updated upstream
           const highlighted = Array.isArray(user[0].highlighted);
-=======
-	  const highlighted = Array.isArray(user[0].highlighted);
->>>>>>> Stashed changes
           const bolded = Array.isArray(user[0].bolded);
           const underlined = Array.isArray(user[0].underlined);
           const italicized = Array.isArray(user[0].italicized);

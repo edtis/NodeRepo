@@ -86,7 +86,3 @@ exports.delete = (req, res) => {
       });
     });
 };
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes

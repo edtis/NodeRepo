@@ -2,7 +2,9 @@ module.exports = app => {
   // Add headers
   app.use(function(req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader("Access-Control-Allow-Origin", "https://goodbookbible.study");
+    res.setHeader("Access-Control-Allow-Origin", [
+      "https://goodbookbible.study"
+    ]);
 
     // Request methods you wish to allow
     res.setHeader(
@@ -29,7 +31,3 @@ module.exports = app => {
   app.get("/modals", modal.findAll);
   app.delete("/modal/delete/:modalId", modal.delete);
 };
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
