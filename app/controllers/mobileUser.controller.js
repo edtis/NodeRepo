@@ -70,8 +70,8 @@ exports.resetPassword = (req, res) => {
   }
   rand = token;
 
-  host = req.get("host");
-  link = req.headers.origin + "/reset/password?id=" + rand;
+  host = "goodbookbible.study";
+  link = "https://goodbookbible.study/reset/password?id=" + rand;
 
   User.findOne({ email: req.body.email }).then(email => {
     if (email) {
@@ -132,8 +132,8 @@ exports.create = async (req, res) => {
     }
     rand = token;
 
-    host = req.get("host");
-    link = req.headers.origin + "/verify?id=" + rand;
+    host = "goodbookbible.study";
+    link = "https://goodbookbible.study/verify?id=" + rand;
     req.body.email = req.body.username;
     delete req.body["username"];
     let user = new User(req.body);
