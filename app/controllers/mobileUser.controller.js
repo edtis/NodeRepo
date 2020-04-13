@@ -16,7 +16,7 @@ async function confirmationMail(user, link) {
       link +
       ">" +
       link +
-      " </a> <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
+      " </a> <br><br>This link will expire after you click it.<br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -42,7 +42,7 @@ async function passwordResetMail(user, link) {
       link +
       ">" +
       link +
-      " </a><br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
+      " </a><br><br>This link will expire after you click it.<br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
   };
 
   transporter.sendMail(mailOptions, function(error, info) {
@@ -70,15 +70,15 @@ exports.resetPassword = (req, res) => {
   }
   rand = token;
 
-  host = "goodbookbible.study";
-  link = "https://goodbookbible.study/reset/password?id=" + rand;
+  host = req.get("host");
+  link = req.headers.origin + "/reset/password?id=" + rand;
 
   User.findOne({ email: req.body.email }).then(email => {
     if (email) {
       passwordResetMail(email, link);
       res.send({
         status: true,
-        message: "Sent you mail on your registered email"
+        message: "Reset link has been sent to your email"
       });
     } else {
       res.send({
@@ -132,8 +132,8 @@ exports.create = async (req, res) => {
     }
     rand = token;
 
-    host = "goodbookbible.study";
-    link = "https://goodbookbible.study/verify?id=" + rand;
+    host = req.get("host");
+    link = req.headers.origin + "/reset/password?id=" + rand;
     req.body.email = req.body.username;
     delete req.body["username"];
     let user = new User(req.body);
@@ -155,7 +155,7 @@ exports.create = async (req, res) => {
             res.send({
               userRegistered: true,
               error: false,
-              message: "Confirmation email Sent.Please check your email."
+              message: "Confirmation Email Sent"
             });
           })
           .catch(err => {
@@ -177,13 +177,30 @@ exports.create = async (req, res) => {
 };
 
 exports.verify = async (req, res) => {
-  if (req.protocol + "://" + req.get("host") == "https://" + host) {
+  if (req.protocol + "://" + req.get("host") == "http://" + host) {
     if (req.query.id == rand) {
-      res.send({
-        status: true,
-        message: mailOptions.to + " has been Successfully verified",
-        id: user_id
-      });
+      User.findById(user_id)
+        .then(user => {
+          if (user.confirmedEmail) {
+            res.send({
+              status: true,
+              message: "Account already confirmed. Link expired",
+              id: user_id
+            });
+          } else {
+            res.send({
+              status: true,
+              message: mailOptions.to + " has been Successfully verified",
+              id: user_id
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            status: false,
+            message: "Internal server error!"
+          });
+        });
     } else {
       res.send({
         status: false,
