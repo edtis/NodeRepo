@@ -230,6 +230,14 @@ exports.findOne = async (req, res) => {
         }
         bcrypt.compare(password, user[0].password).then(function(result) {
           if (result) {
+            if (!user[0].confirmedEmail) {
+              return res.status(200).send({
+                auth: false,
+                error: true,
+                unconfirmed: true,
+                message: "User is not confirmed"
+              });
+            }
             const highlighted = Array.isArray(user[0].highlighted);
             const bolded = Array.isArray(user[0].bolded);
             const underlined = Array.isArray(user[0].underlined);
@@ -242,6 +250,8 @@ exports.findOne = async (req, res) => {
               error: false,
               message: "Logged in successfully",
               databaseID: user[0]._id,
+              firstName: user[0].firstName || null,
+              lastName: user[0].lastName || null,
               hightlight: highlighted ? user[0].highlighted : [],
               bold: bolded ? user[0].bolded : [],
               underline: underlined ? user[0].underlined : [],
