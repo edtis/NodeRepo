@@ -56,17 +56,17 @@ async function passwordResetMail(user, link) {
   });
 }
 
-exports.createUserEmailSent = (user, link, rand) => {
+exports.createUserEmailSent = (user, link, randId) => {
   link = link;
   host = "api.goodbookbible.study";
-  rand = rand;
+  rand = randId;
   confirmationMail(user, link);
 };
 
-exports.resetPasswordEmailSent = (user, link, rand) => {
+exports.resetPasswordEmailSent = (user, link, randId) => {
   link = link;
   host = "api.goodbookbible.study";
-  rand = rand;
+  rand = randId;
   passwordResetMail(user, link);
 };
 
@@ -176,7 +176,7 @@ exports.verify = async (req, res) => {
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
     res.send({
       status: true,
-      rand: rand,
+      ddd: rand,
       message: "Account already confirmed. Link expired",
       id: req.query.id
     });
