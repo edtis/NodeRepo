@@ -61,6 +61,7 @@ exports.createUserEmailSent = (user, link, rand) => {
   host = "goodbookbible.study";
   rand = rand;
   confirmationMail(user, link);
+  console.log(rand, host);
 };
 
 exports.resetPasswordEmailSent = (user, link, rand) => {
@@ -68,6 +69,7 @@ exports.resetPasswordEmailSent = (user, link, rand) => {
   host = "goodbookbible.study";
   rand = rand;
   passwordResetMail(user, link);
+  console.log(rand, host);
 };
 
 exports.resetPassword = (req, res) => {
@@ -104,6 +106,12 @@ exports.resetPassword = (req, res) => {
 };
 
 exports.verifyResetPassword = async (req, res) => {
+  console.log(req.protocol + "://" + req.get("host"), "http://" + host);
+  res.send({
+    status: true,
+    id: "http://" + host,
+    emailId: req.protocol + "://" + req.get("host")
+  });
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
     if (req.query.id == rand) {
       rand = null;
