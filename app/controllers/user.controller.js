@@ -174,6 +174,12 @@ exports.create = async (req, res) => {
 
 exports.verify = async (req, res) => {
   if (req.protocol + "://" + req.get("host") == "http://" + host) {
+    res.send({
+      status: true,
+      rand: rand,
+      message: "Account already confirmed. Link expired",
+      id: req.query.id
+    });
     if (req.query.id == rand) {
       User.findById(user_id)
         .then(user => {
