@@ -4,6 +4,7 @@ const transporter = require("../emails/email.config.js");
 
 var rand, mailOptions, host, link, user_id, emailId;
 var verificationCode = "tbtxzt738";
+var baseUrl = "https://goodbookbible.study";
 async function confirmationMail(user, link) {
   mailOptions = {
     from: "support@GoodBookBible.com",
@@ -69,9 +70,7 @@ exports.resetPassword = (req, res) => {
     token += chars[Math.round(Math.random() * (chars.length - 1))];
   }
   rand = token;
-
-  host = req.get("host");
-  link = req.headers.origin + "/reset/password?id=" + rand;
+  link = baseUrl + "/reset/password?id=" + rand;
 
   User.findOne({ email: req.body.email }).then(email => {
     if (email) {
@@ -90,7 +89,7 @@ exports.resetPassword = (req, res) => {
 };
 
 exports.verifyResetPassword = async (req, res) => {
-  if (req.protocol + "://" + req.get("host") == "http://" + host) {
+  if (req.protocol + "://" + req.get("host") == baseUrl) {
     if (req.query.id == rand) {
       res.send({
         status: true,
@@ -131,9 +130,7 @@ exports.create = async (req, res) => {
       token += chars[Math.round(Math.random() * (chars.length - 1))];
     }
     rand = token;
-
-    host = req.get("host");
-    link = req.headers.origin + "/reset/password?id=" + rand;
+    link = baseUrl + "/reset/password?id=" + rand;
     req.body.email = req.body.username;
     delete req.body["username"];
     let user = new User(req.body);
@@ -177,7 +174,7 @@ exports.create = async (req, res) => {
 };
 
 exports.verify = async (req, res) => {
-  if (req.protocol + "://" + req.get("host") == "http://" + host) {
+  if (req.protocol + "://" + req.get("host") == baseUrl) {
     if (req.query.id == rand) {
       User.findById(user_id)
         .then(user => {
