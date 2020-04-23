@@ -60,7 +60,7 @@ exports.create = async (req, res) => {
       token += chars[Math.round(Math.random() * (chars.length - 1))];
     }
     rand = token;
-    link = baseUrl + "/reset/password?id=" + rand;
+    link = baseUrl + "/verify?id=" + rand;
     req.body.email = req.body.username;
     delete req.body["username"];
     let user = new User(req.body);
