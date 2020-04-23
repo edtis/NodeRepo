@@ -1,61 +1,10 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
-const transporter = require("../emails/email.config.js");
+const userController = require("../controllers/user.controller");
 
-var rand, mailOptions, host, link, user_id, emailId;
+var rand, mailOptions, link, user_id, emailId;
 var verificationCode = "tbtxzt738";
 var baseUrl = "https://goodbookbible.study";
-async function confirmationMail(user, link) {
-  mailOptions = {
-    from: "support@GoodBookBible.com",
-    to: `${user.email}`,
-    subject: "Confirm Email",
-    html:
-      "Dear " +
-      user.firstName +
-      ",<br><br> Thank you for signing up at <a href='http://goodbookbible.study' target='_blank' style='text-decoration: none;'>GoodBookBible.study.</a> <br><br> To continue please confirm your account by clicking this link below or copy the link and paste it in your web browser’s address bar. <br> <a href=" +
-      link +
-      ">" +
-      link +
-      " </a> <br><br>This link will expire after you click it.<br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
-  };
-
-  transporter.sendMail(mailOptions, function(error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      user_id = user._id;
-      emailId = user.email;
-      console.log("Email sent: " + info.response);
-    }
-  });
-}
-
-async function passwordResetMail(user, link) {
-  mailOptions = {
-    from: "support@GoodBookBible.com",
-    to: `${user.email}`,
-    subject: "Reset Password",
-    html:
-      "Hi " +
-      user.firstName +
-      ",<br><br> You have recently sent a request to reset your password. <br> Click the link below to reset your password. <br> <a href=" +
-      link +
-      ">" +
-      link +
-      " </a><br><br>This link will expire after you click it.<br><br> If you have you have received this message in error, please ignore it or contact GoodBookBible. <br><br> Kindest Regards, <br><br> GoodBookBible<br>Support Services"
-  };
-
-  transporter.sendMail(mailOptions, function(error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      user_id = user._id;
-      emailId = user.email;
-      console.log("Email sent: " + info.response);
-    }
-  });
-}
 
 exports.resetPassword = (req, res) => {
   if (!req.body.email) {
@@ -74,7 +23,7 @@ exports.resetPassword = (req, res) => {
 
   User.findOne({ email: req.body.email }).then(email => {
     if (email) {
-      passwordResetMail(email, link);
+      userController.resetPasswordEmailSent(email, link, rand);
       res.send({
         status: true,
         message: "Reset link has been sent to your email"
@@ -86,25 +35,6 @@ exports.resetPassword = (req, res) => {
       });
     }
   });
-};
-
-exports.verifyResetPassword = async (req, res) => {
-  if (req.protocol + "://" + req.get("host") == baseUrl) {
-    if (req.query.id == rand) {
-      res.send({
-        status: true,
-        id: user_id,
-        emailId: emailId
-      });
-    } else {
-      res.send({
-        status: false,
-        message: "Bad request !"
-      });
-    }
-  } else {
-    res.send({ status: false, message: "Request is from unknown source" });
-  }
 };
 
 exports.create = async (req, res) => {
@@ -148,7 +78,7 @@ exports.create = async (req, res) => {
         user
           .save()
           .then(data => {
-            confirmationMail(data, link);
+            userController.createUserEmailSent(data, link, rand);
             res.send({
               userRegistered: true,
               error: false,
@@ -170,42 +100,6 @@ exports.create = async (req, res) => {
       error: true,
       message: "User not registered"
     });
-  }
-};
-
-exports.verify = async (req, res) => {
-  if (req.protocol + "://" + req.get("host") == baseUrl) {
-    if (req.query.id == rand) {
-      User.findById(user_id)
-        .then(user => {
-          if (user.confirmedEmail) {
-            res.send({
-              status: true,
-              message: "Account already confirmed. Link expired",
-              id: user_id
-            });
-          } else {
-            res.send({
-              status: true,
-              message: mailOptions.to + " has been Successfully verified",
-              id: user_id
-            });
-          }
-        })
-        .catch(err => {
-          return res.status(500).send({
-            status: false,
-            message: "Internal server error!"
-          });
-        });
-    } else {
-      res.send({
-        status: false,
-        message: "Bad request !"
-      });
-    }
-  } else {
-    res.send({ status: false, message: "Request is from unknown source" });
   }
 };
 

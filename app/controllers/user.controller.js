@@ -56,6 +56,20 @@ async function passwordResetMail(user, link) {
   });
 }
 
+exports.createUserEmailSent = (user, link, rand) => {
+  link = link;
+  host = "goodbookbible.study";
+  rand = rand;
+  confirmationMail(user, link);
+};
+
+exports.resetPasswordEmailSent = (user, link, rand) => {
+  link = link;
+  host = "goodbookbible.study";
+  rand = rand;
+  passwordResetMail(user, link);
+};
+
 exports.resetPassword = (req, res) => {
   if (!req.body.email) {
     return res.status(400).send({
