@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model.js");
 const userController = require("../controllers/user.controller");
 
-var rand, mailOptions, link, user_id, emailId;
+var rand, link;
 var verificationCode = "tbtxzt738";
 var baseUrl = "https://goodbookbible.study";
 
@@ -272,6 +272,80 @@ exports.highlight = async (req, res) => {
           message: "Verse not highlighted"
         });
       });
+  } else {
+    res.send({
+      highlight: false,
+      error: true,
+      message: "Verse not highlighted"
+    });
+  }
+};
+
+exports.highlightUpdate = async (req, res) => {
+  let { highlight, username, databaseID, highlighted, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      highlight: false,
+      error: true,
+      message: "Highlight can not be empty"
+    });
+  }
+  if (highlight === true && highlighted) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      highlight = user[0].highlighted || [];
+      for (let i = 0; i < highlight.length; i++) {
+        for (let j = 0; j < highlighted.length; j++) {
+          if (
+            highlight[i].book === highlighted[j].book &&
+            highlight[i].chapter === highlighted[j].chapter &&
+            highlight[i].verse === highlighted[j].verse
+          ) {
+            let index = highlight.indexOf(highlight[i]);
+            if (index > -1) {
+              highlight.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedHighlight = null;
+      if (add === true) {
+        updatedHighlight = [...highlight, ...highlighted];
+      } else {
+        updatedHighlight = [...highlight];
+      }
+      User.update(
+        data,
+        {
+          $set: { highlighted: updatedHighlight }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              highlight: true,
+              allHighlights: updatedHighlight
+            });
+          } else {
+            res.send({
+              highlight: false,
+              error: true,
+              message: "Verse already highlighted"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            highlight: false,
+            error: true,
+            message: "Verse not highlighted"
+          });
+        });
+    });
   } else {
     res.send({
       highlight: false,

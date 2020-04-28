@@ -27,6 +27,7 @@ module.exports = app => {
   });
   const user = require("../controllers/mobileUser.controller.js");
 
+  // old paths
   app.post("/mobile/register", user.create);
   app.post("/mobile/login", user.findOne);
   app.post("/mobile/all", user.all);
@@ -37,4 +38,14 @@ module.exports = app => {
   app.post("/mobile/italic", user.italic);
   app.post("/mobile/favorite", user.favorite);
   app.post("/mobile/notes", user.notes);
+
+  // new paths
+
+  app.post("/mobile/highlight/update", user.highlightUpdate);
+  app.post("/mobile/bold/update", user.bold);
+  app.post("/mobile/underline/update", user.underline);
+  app.post("/mobile/referencetags/update", user.referencetags);
+  app.post("/mobile/italic/update", user.italic);
+  app.post("/mobile/favorite/update", user.favorite);
+  app.post("/mobile/notes/update", user.notes);
 };
