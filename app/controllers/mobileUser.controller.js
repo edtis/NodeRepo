@@ -296,26 +296,26 @@ exports.highlightUpdate = async (req, res) => {
       _id: databaseID
     };
     User.find(data).then(user => {
-      highlight = user[0].highlighted || [];
-      for (let i = 0; i < highlight.length; i++) {
+      let highlightData = user[0].highlighted || [];
+      for (let i = 0; i < highlightData.length; i++) {
         for (let j = 0; j < highlighted.length; j++) {
           if (
-            highlight[i].book === highlighted[j].book &&
-            highlight[i].chapter === highlighted[j].chapter &&
-            highlight[i].verse === highlighted[j].verse
+            highlightData[i].book === highlighted[j].book &&
+            highlightData[i].chapter === highlighted[j].chapter &&
+            highlightData[i].verse === highlighted[j].verse
           ) {
-            let index = highlight.indexOf(highlight[i]);
+            let index = highlightData.indexOf(highlightData[i]);
             if (index > -1) {
-              highlight.splice(index, 1);
+              highlightData.splice(index, 1);
             }
           }
         }
       }
       let updatedHighlight = null;
       if (add === true) {
-        updatedHighlight = [...highlight, ...highlighted];
+        updatedHighlight = [...highlightData, ...highlighted];
       } else {
-        updatedHighlight = [...highlight];
+        updatedHighlight = [...highlightData];
       }
       User.update(
         data,
@@ -405,6 +405,80 @@ exports.bold = async (req, res) => {
   }
 };
 
+exports.boldUpdate = async (req, res) => {
+  let { bold, username, databaseID, bolded, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      bold: false,
+      error: true,
+      message: "Bolded can not be empty"
+    });
+  }
+  if (bold === true && bolded) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let boldData = user[0].bolded || [];
+      for (let i = 0; i < boldData.length; i++) {
+        for (let j = 0; j < bolded.length; j++) {
+          if (
+            boldData[i].book === bolded[j].book &&
+            boldData[i].chapter === bolded[j].chapter &&
+            boldData[i].verse === bolded[j].verse
+          ) {
+            let index = boldData.indexOf(boldData[i]);
+            if (index > -1) {
+              boldData.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedBold = null;
+      if (add === true) {
+        updatedBold = [...boldData, ...bolded];
+      } else {
+        updatedBold = [...boldData];
+      }
+      User.update(
+        data,
+        {
+          $set: { bolded: updatedBold }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              bold: true,
+              allBolds: updatedBold
+            });
+          } else {
+            res.send({
+              bold: false,
+              error: true,
+              message: "Verse already bolded"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            bold: false,
+            error: true,
+            message: "Verse not bolded"
+          });
+        });
+    });
+  } else {
+    res.send({
+      bold: false,
+      error: true,
+      message: "Verse not bolded"
+    });
+  }
+};
+
 exports.underline = async (req, res) => {
   let { underline, username, databaseID, underlined } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -446,6 +520,80 @@ exports.underline = async (req, res) => {
           message: "Verse not underlined"
         });
       });
+  } else {
+    res.send({
+      underlined: false,
+      error: true,
+      message: "Verse not underlined"
+    });
+  }
+};
+
+exports.underlineUpdate = async (req, res) => {
+  let { underline, username, databaseID, underlined, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      underlined: false,
+      error: true,
+      message: "Underlined can not be empty"
+    });
+  }
+  if (underline === true && underlined) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let underlinedData = user[0].underlined || [];
+      for (let i = 0; i < underlinedData.length; i++) {
+        for (let j = 0; j < underlined.length; j++) {
+          if (
+            underlinedData[i].book === underlined[j].book &&
+            underlinedData[i].chapter === underlined[j].chapter &&
+            underlinedData[i].verse === underlined[j].verse
+          ) {
+            let index = underlinedData.indexOf(underlinedData[i]);
+            if (index > -1) {
+              underlinedData.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedUnderlined = null;
+      if (add === true) {
+        updatedUnderlined = [...underlinedData, ...underlined];
+      } else {
+        updatedUnderlined = [...underlinedData];
+      }
+      User.update(
+        data,
+        {
+          $set: { underlined: updatedUnderlined }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              underlined: true,
+              allUnderline: updatedUnderlined
+            });
+          } else {
+            res.send({
+              underlined: false,
+              error: true,
+              message: "Verse already underlined"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            underlined: false,
+            error: true,
+            message: "Verse not underlined"
+          });
+        });
+    });
   } else {
     res.send({
       underlined: false,
@@ -555,6 +703,80 @@ exports.italic = async (req, res) => {
   }
 };
 
+exports.italicUpdate = async (req, res) => {
+  let { italic, username, databaseID, italicized, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      italic: false,
+      error: true,
+      message: "Italic can not be empty"
+    });
+  }
+  if (italic === true && italicized) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let italicizedData = user[0].italicized || [];
+      for (let i = 0; i < italicizedData.length; i++) {
+        for (let j = 0; j < italicized.length; j++) {
+          if (
+            italicizedData[i].book === italicized[j].book &&
+            italicizedData[i].chapter === italicized[j].chapter &&
+            italicizedData[i].verse === italicized[j].verse
+          ) {
+            let index = italicizedData.indexOf(italicizedData[i]);
+            if (index > -1) {
+              italicizedData.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedItalicized = null;
+      if (add === true) {
+        updatedItalicized = [...italicizedData, ...italicized];
+      } else {
+        updatedItalicized = [...italicizedData];
+      }
+      User.update(
+        data,
+        {
+          $set: { italicized: updatedItalicized }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              italic: true,
+              allItalics: updatedItalicized
+            });
+          } else {
+            res.send({
+              italic: false,
+              error: true,
+              message: "Verse already italic"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            italic: false,
+            error: true,
+            message: "Verse not italic"
+          });
+        });
+    });
+  } else {
+    res.send({
+      italic: false,
+      error: true,
+      message: "Verse not italic"
+    });
+  }
+};
+
 exports.favorite = async (req, res) => {
   let { favorite, username, databaseID, favs } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -596,6 +818,80 @@ exports.favorite = async (req, res) => {
           message: "Verse not favorite"
         });
       });
+  } else {
+    res.send({
+      favorite: false,
+      error: true,
+      message: "Verse not favorite"
+    });
+  }
+};
+
+exports.favoriteUpdate = async (req, res) => {
+  let { favorite, username, databaseID, favs, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      favorite: false,
+      error: true,
+      message: "Favorite can not be empty"
+    });
+  }
+  if (favorite === true && favs) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let favsData = user[0].favs || [];
+      for (let i = 0; i < favsData.length; i++) {
+        for (let j = 0; j < favs.length; j++) {
+          if (
+            favsData[i].book === favs[j].book &&
+            favsData[i].chapter === favs[j].chapter &&
+            favsData[i].verse === favs[j].verse
+          ) {
+            let index = favsData.indexOf(favsData[i]);
+            if (index > -1) {
+              favsData.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedFavs = null;
+      if (add === true) {
+        updatedFavs = [...favsData, ...favs];
+      } else {
+        updatedFavs = [...favsData];
+      }
+      User.update(
+        data,
+        {
+          $set: { favs: updatedFavs }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              favorite: true,
+              allFavorite: updatedFavs
+            });
+          } else {
+            res.send({
+              favorite: false,
+              error: true,
+              message: "Verse already favorited"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            favorite: false,
+            error: true,
+            message: "Verse not favorite"
+          });
+        });
+    });
   } else {
     res.send({
       favorite: false,

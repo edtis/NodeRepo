@@ -42,10 +42,10 @@ module.exports = app => {
   // new paths
 
   app.post("/mobile/highlight/update", user.highlightUpdate);
-  app.post("/mobile/bold/update", user.bold);
-  app.post("/mobile/underline/update", user.underline);
-  app.post("/mobile/referencetags/update", user.referencetags);
-  app.post("/mobile/italic/update", user.italic);
-  app.post("/mobile/favorite/update", user.favorite);
-  app.post("/mobile/notes/update", user.notes);
+  app.post("/mobile/bold/update", user.boldUpdate);
+  app.post("/mobile/underline/update", user.underlineUpdate);
+  app.post("/mobile/referencetags/update", user.referencetagsUpdate);
+  app.post("/mobile/italic/update", user.italicUpdate);
+  app.post("/mobile/favorite/update", user.favoriteUpdate);
+  app.post("/mobile/notes/update", user.notesUpdate);
 };
