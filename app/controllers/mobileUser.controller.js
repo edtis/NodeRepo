@@ -653,6 +653,80 @@ exports.referencetags = async (req, res) => {
   }
 };
 
+exports.referencetagsUpdate = async (req, res) => {
+  let { referenceTag, username, databaseID, referenceTags } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      referenceTags: false,
+      error: true,
+      message: "ReferenceTags can not be empty"
+    });
+  }
+  if (referenceTag === true && referenceTags) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let referenceTagsData = user[0].referenceTags || [];
+      for (let i = 0; i < referenceTagsData.length; i++) {
+        for (let j = 0; j < referenceTags.length; j++) {
+          if (
+            referenceTagsData[i].book === referenceTags[j].book &&
+            referenceTagsData[i].chapter === referenceTags[j].chapter &&
+            referenceTagsData[i].verse === referenceTags[j].verse
+          ) {
+            let index = referenceTagsData.indexOf(referenceTagsData[i]);
+            if (index > -1) {
+              referenceTagsData.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedReferenceTags = null;
+      if (referenceTags[0].tags.length) {
+        updatedReferenceTags = [...referenceTagsData, ...referenceTags];
+      } else {
+        updatedReferenceTags = [...referenceTagsData];
+      }
+      User.update(
+        data,
+        {
+          $set: { referenceTags: updatedReferenceTags }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              referenceTags: true,
+              allReferenceTags: updatedReferenceTags
+            });
+          } else {
+            res.send({
+              referenceTags: false,
+              error: true,
+              message: "Reference Tag already applied"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            referenceTags: false,
+            error: true,
+            message: "Reference Tag not applied"
+          });
+        });
+    });
+  } else {
+    res.send({
+      referenceTags: false,
+      error: true,
+      message: "Reference Tag not applied"
+    });
+  }
+};
+
 exports.italic = async (req, res) => {
   let { italic, username, databaseID, italicized } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -942,6 +1016,80 @@ exports.notes = async (req, res) => {
           message: "Verse not note"
         });
       });
+  } else {
+    res.send({
+      note: false,
+      error: true,
+      message: "Verse not note"
+    });
+  }
+};
+
+exports.notesUpdate = async (req, res) => {
+  let { note, username, databaseID, notes } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      note: false,
+      error: true,
+      message: "Note can not be empty"
+    });
+  }
+  if (note === true && notes) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let notesData = user[0].notes || [];
+      for (let i = 0; i < notesData.length; i++) {
+        for (let j = 0; j < notes.length; j++) {
+          if (
+            notesData[i].book === notes[j].book &&
+            notesData[i].chapter === notes[j].chapter &&
+            notesData[i].verse === notes[j].verse
+          ) {
+            let index = notesData.indexOf(notesData[i]);
+            if (index > -1) {
+              notesData.splice(index, 1);
+            }
+          }
+        }
+      }
+      let updatedNotes = null;
+      if (notes[0].note.length) {
+        updatedNotes = [...notesData, ...notes];
+      } else {
+        updatedNotes = [...notesData];
+      }
+      User.update(
+        data,
+        {
+          $set: { notes: updatedNotes }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              note: true,
+              allNotes: updatedNotes
+            });
+          } else {
+            res.send({
+              note: false,
+              error: true,
+              message: "Verse already noted"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            note: false,
+            error: true,
+            message: "Verse not note"
+          });
+        });
+    });
   } else {
     res.send({
       note: false,

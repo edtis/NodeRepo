@@ -44,8 +44,8 @@ module.exports = app => {
   app.post("/mobile/highlight/update", user.highlightUpdate);
   app.post("/mobile/bold/update", user.boldUpdate);
   app.post("/mobile/underline/update", user.underlineUpdate);
-  //app.post("/mobile/referencetags/update", user.referencetagsUpdate);
+  app.post("/mobile/referencetags/update", user.referencetagsUpdate);
   app.post("/mobile/italic/update", user.italicUpdate);
   app.post("/mobile/favorite/update", user.favoriteUpdate);
-  //app.post("/mobile/notes/update", user.notesUpdate);
+  app.post("/mobile/notes/update", user.notesUpdate);
 };
