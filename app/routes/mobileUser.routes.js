@@ -40,7 +40,6 @@ module.exports = app => {
   app.post("/mobile/notes", user.notes);
 
   // new paths
-
   app.post("/mobile/highlight/update", user.highlightUpdate);
   app.post("/mobile/bold/update", user.boldUpdate);
   app.post("/mobile/underline/update", user.underlineUpdate);
