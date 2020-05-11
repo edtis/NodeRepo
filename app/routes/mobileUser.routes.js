@@ -39,7 +39,7 @@ module.exports = app => {
   app.post("/mobile/favorite", user.favorite);
   app.post("/mobile/notes", user.notes);
 
-  // new paths
+  // update paths
   app.post("/mobile/highlight/update", user.highlightUpdate);
   app.post("/mobile/bold/update", user.boldUpdate);
   app.post("/mobile/underline/update", user.underlineUpdate);
@@ -47,4 +47,13 @@ module.exports = app => {
   app.post("/mobile/italic/update", user.italicUpdate);
   app.post("/mobile/favorite/update", user.favoriteUpdate);
   app.post("/mobile/notes/update", user.notesUpdate);
+
+  // sync paths
+  app.post("/mobile/highlight/sync", user.highlightSync);
+  app.post("/mobile/bold/sync", user.boldSync);
+  app.post("/mobile/underline/sync", user.underlineSync);
+  app.post("/mobile/referencetags/sync", user.referencetagsSync);
+  app.post("/mobile/italic/sync", user.italicSync);
+  app.post("/mobile/favorite/sync", user.favoriteSync);
+  app.post("/mobile/notes/sync", user.notesSync);
 };

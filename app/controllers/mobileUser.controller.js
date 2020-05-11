@@ -355,6 +355,80 @@ exports.highlightUpdate = async (req, res) => {
   }
 };
 
+exports.highlightSync = async (req, res) => {
+  let { highlight, username, databaseID, highlighted, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      highlight: false,
+      error: true,
+      message: "Highlight can not be empty"
+    });
+  }
+  if (highlight === true && highlighted) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let highlightData = user[0].highlighted || [];
+      selectedData = highlightData.filter(function(hd) {
+        return !highlighted.find(function(h) {
+          return (
+            hd.book === h.book &&
+            hd.chapter === h.chapter &&
+            hd.verse === h.verse
+          );
+        });
+      });
+      let updatedHighlight = null;
+      if (add === true) {
+        updatedHighlight = [...selectedData, ...highlighted];
+      } else {
+        updatedHighlight = [...selectedData];
+      }
+
+      updatedHighlight = Array.from(
+        new Set(updatedHighlight.map(JSON.stringify))
+      ).map(JSON.parse);
+
+      User.update(
+        data,
+        {
+          $set: { highlighted: updatedHighlight }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              highlight: true,
+              allHighlights: updatedHighlight
+            });
+          } else {
+            res.send({
+              highlight: false,
+              error: true,
+              message: "Verse already highlighted"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            highlight: false,
+            error: true,
+            message: "Verse not highlighted"
+          });
+        });
+    });
+  } else {
+    res.send({
+      highlight: false,
+      error: true,
+      message: "Verse not highlighted"
+    });
+  }
+};
+
 exports.bold = async (req, res) => {
   let { bold, username, databaseID, bolded } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -479,6 +553,87 @@ exports.boldUpdate = async (req, res) => {
   }
 };
 
+exports.boldSync = async (req, res) => {
+  let { bold, username, databaseID, bolded, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      bold: false,
+      error: true,
+      message: "Bolded can not be empty"
+    });
+  }
+  if (bold === true && bolded) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data)
+      .then(user => {
+        let boldData = user[0].bolded || [];
+        selectedData = boldData.filter(function(bd) {
+          return !bolded.find(function(b) {
+            return (
+              bd.book === b.book &&
+              bd.chapter === b.chapter &&
+              bd.verse === b.verse
+            );
+          });
+        });
+        let updatedBold = null;
+        if (add === true) {
+          updatedBold = [...selectedData, ...bolded];
+        } else {
+          updatedBold = [...selectedData];
+        }
+        updatedBold = Array.from(new Set(updatedBold.map(JSON.stringify))).map(
+          JSON.parse
+        );
+
+        User.update(
+          data,
+          {
+            $set: { bolded: updatedBold }
+          },
+          { upsert: true }
+        )
+          .then(user => {
+            if (user.nModified) {
+              res.send({
+                bold: true,
+                allBolds: updatedBold
+              });
+            } else {
+              res.send({
+                bold: false,
+                error: true,
+                message: "Verse already bolded"
+              });
+            }
+          })
+          .catch(err => {
+            return res.status(500).send({
+              bold: false,
+              error: true,
+              message: "Verse not bolded"
+            });
+          });
+      })
+      .catch(err => {
+        return res.status(500).send({
+          bold: false,
+          error: true,
+          message: "Verse not bolded"
+        });
+      });
+  } else {
+    res.send({
+      bold: false,
+      error: true,
+      message: "Verse not bolded"
+    });
+  }
+};
+
 exports.underline = async (req, res) => {
   let { underline, username, databaseID, underlined } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -565,6 +720,80 @@ exports.underlineUpdate = async (req, res) => {
       } else {
         updatedUnderlined = [...underlinedData];
       }
+      User.update(
+        data,
+        {
+          $set: { underlined: updatedUnderlined }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              underlined: true,
+              allUnderline: updatedUnderlined
+            });
+          } else {
+            res.send({
+              underlined: false,
+              error: true,
+              message: "Verse already underlined"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            underlined: false,
+            error: true,
+            message: "Verse not underlined"
+          });
+        });
+    });
+  } else {
+    res.send({
+      underlined: false,
+      error: true,
+      message: "Verse not underlined"
+    });
+  }
+};
+
+exports.underlineSync = async (req, res) => {
+  let { underline, username, databaseID, underlined, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      underlined: false,
+      error: true,
+      message: "Underlined can not be empty"
+    });
+  }
+  if (underline === true && underlined) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let underlinedData = user[0].underlined || [];
+      selectedData = underlinedData.filter(function(ud) {
+        return !underlined.find(function(u) {
+          return (
+            ud.book === u.book &&
+            ud.chapter === u.chapter &&
+            ud.verse === u.verse
+          );
+        });
+      });
+      let updatedUnderlined = null;
+      if (add === true) {
+        updatedUnderlined = [...selectedData, ...underlined];
+      } else {
+        updatedUnderlined = [...selectedData];
+      }
+
+      updatedUnderlined = Array.from(
+        new Set(updatedUnderlined.map(JSON.stringify))
+      ).map(JSON.parse);
+
       User.update(
         data,
         {
@@ -727,6 +956,79 @@ exports.referencetagsUpdate = async (req, res) => {
   }
 };
 
+exports.referencetagsSync = async (req, res) => {
+  let { referenceTag, username, databaseID, referenceTags } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      referenceTags: false,
+      error: true,
+      message: "ReferenceTags can not be empty"
+    });
+  }
+  if (referenceTag === true && referenceTags) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let referenceTagsData = user[0].referenceTags || [];
+      selectedData = referenceTagsData.filter(function(rd) {
+        return !referenceTags.find(function(r) {
+          return (
+            rd.book === r.book &&
+            rd.chapter === r.chapter &&
+            rd.verse === r.verse
+          );
+        });
+      });
+      let updatedReferenceTags = null;
+      if (referenceTags[0].tags.length) {
+        updatedReferenceTags = [...selectedData, ...referenceTags];
+      } else {
+        updatedReferenceTags = [...selectedData];
+      }
+      updatedReferenceTags = Array.from(
+        new Set(updatedReferenceTags.map(JSON.stringify))
+      ).map(JSON.parse);
+
+      User.update(
+        data,
+        {
+          $set: { referenceTags: updatedReferenceTags }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              referenceTags: true,
+              allReferenceTags: updatedReferenceTags
+            });
+          } else {
+            res.send({
+              referenceTags: false,
+              error: true,
+              message: "Reference Tag already applied"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            referenceTags: false,
+            error: true,
+            message: "Reference Tag not applied"
+          });
+        });
+    });
+  } else {
+    res.send({
+      referenceTags: false,
+      error: true,
+      message: "Reference Tag not applied"
+    });
+  }
+};
+
 exports.italic = async (req, res) => {
   let { italic, username, databaseID, italicized } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -813,6 +1115,80 @@ exports.italicUpdate = async (req, res) => {
       } else {
         updatedItalicized = [...italicizedData];
       }
+      User.update(
+        data,
+        {
+          $set: { italicized: updatedItalicized }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              italic: true,
+              allItalics: updatedItalicized
+            });
+          } else {
+            res.send({
+              italic: false,
+              error: true,
+              message: "Verse already italic"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            italic: false,
+            error: true,
+            message: "Verse not italic"
+          });
+        });
+    });
+  } else {
+    res.send({
+      italic: false,
+      error: true,
+      message: "Verse not italic"
+    });
+  }
+};
+
+exports.italicSync = async (req, res) => {
+  let { italic, username, databaseID, italicized, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      italic: false,
+      error: true,
+      message: "Italic can not be empty"
+    });
+  }
+  if (italic === true && italicized) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let italicizedData = user[0].italicized || [];
+      selectedData = italicizedData.filter(function(id) {
+        return !italicized.find(function(i) {
+          return (
+            id.book === i.book &&
+            id.chapter === i.chapter &&
+            id.verse === i.verse
+          );
+        });
+      });
+      let updatedItalicized = null;
+      if (add === true) {
+        updatedItalicized = [...selectedData, ...italicized];
+      } else {
+        updatedItalicized = [...selectedData];
+      }
+
+      updatedItalicized = Array.from(
+        new Set(updatedItalicized.map(JSON.stringify))
+      ).map(JSON.parse);
+
       User.update(
         data,
         {
@@ -975,6 +1351,79 @@ exports.favoriteUpdate = async (req, res) => {
   }
 };
 
+exports.favoriteSync = async (req, res) => {
+  let { favorite, username, databaseID, favs, add } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      favorite: false,
+      error: true,
+      message: "Favorite can not be empty"
+    });
+  }
+  if (favorite === true && favs) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let favsData = user[0].favs || [];
+      selectedData = favsData.filter(function(fd) {
+        return !favs.find(function(f) {
+          return (
+            fd.book === f.book &&
+            fd.chapter === f.chapter &&
+            fd.verse === f.verse
+          );
+        });
+      });
+      let updatedFavs = null;
+      if (add === true) {
+        updatedFavs = [...selectedData, ...favs];
+      } else {
+        updatedFavs = [...selectedData];
+      }
+      updatedFavs = Array.from(new Set(updatedFavs.map(JSON.stringify))).map(
+        JSON.parse
+      );
+
+      User.update(
+        data,
+        {
+          $set: { favs: updatedFavs }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              favorite: true,
+              allFavorite: updatedFavs
+            });
+          } else {
+            res.send({
+              favorite: false,
+              error: true,
+              message: "Verse already favorited"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            favorite: false,
+            error: true,
+            message: "Verse not favorite"
+          });
+        });
+    });
+  } else {
+    res.send({
+      favorite: false,
+      error: true,
+      message: "Verse not favorite"
+    });
+  }
+};
+
 exports.notes = async (req, res) => {
   let { note, username, databaseID, notes } = req.body;
   if (Object.keys(req.body).length === 0) {
@@ -1061,6 +1510,80 @@ exports.notesUpdate = async (req, res) => {
       } else {
         updatedNotes = [...notesData];
       }
+      User.update(
+        data,
+        {
+          $set: { notes: updatedNotes }
+        },
+        { upsert: true }
+      )
+        .then(user => {
+          if (user.nModified) {
+            res.send({
+              note: true,
+              allNotes: updatedNotes
+            });
+          } else {
+            res.send({
+              note: false,
+              error: true,
+              message: "Verse already noted"
+            });
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({
+            note: false,
+            error: true,
+            message: "Verse not note"
+          });
+        });
+    });
+  } else {
+    res.send({
+      note: false,
+      error: true,
+      message: "Verse not note"
+    });
+  }
+};
+
+exports.notesSync = async (req, res) => {
+  let { note, username, databaseID, notes } = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({
+      note: false,
+      error: true,
+      message: "Note can not be empty"
+    });
+  }
+  if (note === true && notes) {
+    const data = {
+      email: username,
+      _id: databaseID
+    };
+    User.find(data).then(user => {
+      let notesData = user[0].notes || [];
+      selectedData = notesData.filter(function(nd) {
+        return !notes.find(function(n) {
+          return (
+            nd.book === n.book &&
+            nd.chapter === n.chapter &&
+            nd.verse === n.verse
+          );
+        });
+      });
+      let updatedNotes = null;
+      if (notes[0].note.length) {
+        updatedNotes = [...selectedData, ...notes];
+      } else {
+        updatedNotes = [...selectedData];
+      }
+
+      updatedNotes = Array.from(new Set(updatedNotes.map(JSON.stringify))).map(
+        JSON.parse
+      );
+
       User.update(
         data,
         {
