@@ -371,6 +371,12 @@ exports.highlightSync = async (req, res) => {
     };
     User.find(data).then(user => {
       let highlightData = user[0].highlighted || [];
+      if (highlighted.length === 0) {
+        return res.status(200).send({
+          highlight: true,
+          allHighlights: highlightData
+        });
+      }
       selectedData = highlightData.filter(function(hd) {
         return !highlighted.find(function(h) {
           return (
@@ -570,6 +576,12 @@ exports.boldSync = async (req, res) => {
     User.find(data)
       .then(user => {
         let boldData = user[0].bolded || [];
+        if (bolded.length === 0) {
+          return res.status(200).send({
+            bold: true,
+            allBolds: boldData
+          });
+        }
         selectedData = boldData.filter(function(bd) {
           return !bolded.find(function(b) {
             return (
@@ -774,6 +786,12 @@ exports.underlineSync = async (req, res) => {
     };
     User.find(data).then(user => {
       let underlinedData = user[0].underlined || [];
+      if (underlined.length === 0) {
+        return res.status(200).send({
+          underlined: true,
+          allUnderline: underlinedData
+        });
+      }
       selectedData = underlinedData.filter(function(ud) {
         return !underlined.find(function(u) {
           return (
@@ -913,7 +931,7 @@ exports.referencetagsUpdate = async (req, res) => {
         }
       }
       let updatedReferenceTags = null;
-      if (referenceTags[0].tags.length) {
+      if (referenceTags[0].Tags.length) {
         updatedReferenceTags = [...referenceTagsData, ...referenceTags];
       } else {
         updatedReferenceTags = [...referenceTagsData];
@@ -972,6 +990,12 @@ exports.referencetagsSync = async (req, res) => {
     };
     User.find(data).then(user => {
       let referenceTagsData = user[0].referenceTags || [];
+      if (referenceTags.length === 0) {
+        return res.status(200).send({
+          referenceTags: true,
+          allReferenceTags: referenceTagsData
+        });
+      }
       selectedData = referenceTagsData.filter(function(rd) {
         return !referenceTags.find(function(r) {
           return (
@@ -982,7 +1006,7 @@ exports.referencetagsSync = async (req, res) => {
         });
       });
       let updatedReferenceTags = null;
-      if (referenceTags[0].tags.length) {
+      if (referenceTags[0].Tags.length) {
         updatedReferenceTags = [...selectedData, ...referenceTags];
       } else {
         updatedReferenceTags = [...selectedData];
@@ -1169,6 +1193,12 @@ exports.italicSync = async (req, res) => {
     };
     User.find(data).then(user => {
       let italicizedData = user[0].italicized || [];
+      if (italicized.length === 0) {
+        return res.status(200).send({
+          italic: true,
+          allItalics: italicizedData
+        });
+      }
       selectedData = italicizedData.filter(function(id) {
         return !italicized.find(function(i) {
           return (
@@ -1367,6 +1397,12 @@ exports.favoriteSync = async (req, res) => {
     };
     User.find(data).then(user => {
       let favsData = user[0].favs || [];
+      if (favs.length === 0) {
+        return res.status(200).send({
+          favorite: true,
+          allFavorite: favsData
+        });
+      }
       selectedData = favsData.filter(function(fd) {
         return !favs.find(function(f) {
           return (
@@ -1564,6 +1600,12 @@ exports.notesSync = async (req, res) => {
     };
     User.find(data).then(user => {
       let notesData = user[0].notes || [];
+      if (notes.length === 0) {
+        return res.status(200).send({
+          note: true,
+          allNotes: notesData
+        });
+      }
       selectedData = notesData.filter(function(nd) {
         return !notes.find(function(n) {
           return (
