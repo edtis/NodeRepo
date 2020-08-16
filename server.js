@@ -35,12 +35,14 @@ app.get("/", (req, res) => {
   res.json({ message: "Project is running" });
 });
 
-require("./app/routes/book.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
 require("./app/routes/broadcast.routes.js")(app);
 require("./app/routes/modal.routes.js")(app);
 require("./app/routes/website.routes.js")(app);
 require("./app/routes/mobileUser.routes.js")(app);
+require("./app/routes/firebaseUser.routes.js")(app);
+require("./app/routes/firebaseBook.routes.js")(app);
+require("./app/routes/firebasePublicAnnouncement.routes.js")(app);
 // listen for requests
 app.listen(80, () => {
   console.log("Server is listening on port 80");

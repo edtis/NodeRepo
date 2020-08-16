@@ -24,9 +24,10 @@ module.exports = app => {
     // Pass to next layer of middleware
     next();
   });
-  const modal = require("../controllers/modal.controller.js");
+  const firebaseUser = require("../controllers/firebaseUser.controller.js");
 
-  app.post("/modal/create", modal.create);
-  app.get("/modals", modal.findAll);
-  app.delete("/modal/delete/:modalId", modal.delete);
+  app.post("/firebase/create/user", firebaseUser.create);
+  app.put("/firebase/update/user", firebaseUser.update);
+  app.post("/firebase/delete/user", firebaseUser.delete);
+  app.get("/firebase/get/users", firebaseUser.getUsers);
 };

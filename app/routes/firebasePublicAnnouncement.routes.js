@@ -24,9 +24,22 @@ module.exports = app => {
     // Pass to next layer of middleware
     next();
   });
-  const modal = require("../controllers/modal.controller.js");
+  const firebasePublicAnnouncement = require("../controllers/firebasePublicAnnouncement.controller.js");
 
-  app.post("/modal/create", modal.create);
-  app.get("/modals", modal.findAll);
-  app.delete("/modal/delete/:modalId", modal.delete);
+  app.post(
+    "/firebase/create/publicAnnouncement",
+    firebasePublicAnnouncement.create
+  );
+  app.put(
+    "/firebase/update/publicAnnouncement",
+    firebasePublicAnnouncement.update
+  );
+  app.post(
+    "/firebase/delete/publicAnnouncement",
+    firebasePublicAnnouncement.delete
+  );
+  app.get(
+    "/firebase/get/publicAnnouncements",
+    firebasePublicAnnouncement.getPublicAnnouncements
+  );
 };
