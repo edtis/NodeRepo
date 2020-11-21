@@ -52,6 +52,7 @@ require("./app/routes/firebaseUser.routes.js")(app);
 require("./app/routes/firebaseBook.routes.js")(app);
 require("./app/routes/firebasePublicAnnouncement.routes.js")(app);
 require("./app/routes/interlinear.routes.js")(app);
+require("./app/routes/strongs.routes.js")(app);
 // listen for requests
 app.listen(80, () => {
   console.log("Server is listening on port 80");
