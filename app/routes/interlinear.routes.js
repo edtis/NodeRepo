@@ -3,7 +3,10 @@ module.exports = (app) => {
   // Add headers
   app.use(function (req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader("Access-Control-Allow-Origin", [allowURL]);
+    const origin = req.headers.origin;
+    if (allowURL.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
 
     // Request methods you wish to allow
     res.setHeader(
