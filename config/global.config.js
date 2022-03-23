@@ -7,5 +7,7 @@ const allowURL = [
   "https://goodbookbible.social/",
   "https://www.goodbookbible.social",
   "https://www.goodbookbible.social/",
+  "http://localhost:3000",
+  "http://localhost:3000/",
 ];
 module.exports = allowURL;

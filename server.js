@@ -50,6 +50,7 @@ require("./app/routes/website.routes.js")(app);
 require("./app/routes/mobileUser.routes.js")(app);
 require("./app/routes/firebaseUser.routes.js")(app);
 require("./app/routes/firebaseBook.routes.js")(app);
+require("./app/routes/firebaseAdmin.routes.js")(app);
 require("./app/routes/firebasePublicAnnouncement.routes.js")(app);
 require("./app/routes/interlinear.routes.js")(app);
 require("./app/routes/strongs.routes.js")(app);

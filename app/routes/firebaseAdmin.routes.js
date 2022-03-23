@@ -27,10 +27,7 @@ module.exports = (app) => {
     // Pass to next layer of middleware
     next();
   });
-  const firebaseUser = require("../controllers/firebaseUser.controller.js");
+  const firebaseAdmin = require("../controllers/firebaseAdmin.controller.js");
 
-  app.post("/firebase/create/user", firebaseUser.create);
-  app.put("/firebase/update/user", firebaseUser.update);
-  //app.post("/firebase/delete/user", firebaseUser.delete);
-  app.get("/firebase/get/users", firebaseUser.getUsers);
+  app.post("/firebase/delete/user", firebaseAdmin.delete);
 };
