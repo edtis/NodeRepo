@@ -24,3 +24,29 @@ exports.delete = async (req, res) => {
       });
     });
 };
+
+exports.listAllUsers = async (req, res) => {
+  let result = [];
+  admin
+    .auth()
+    .listUsers(1000)
+    .then(function (listUsersResult) {
+      listUsersResult.users.forEach(function (userRecord) {
+        if (!userRecord.emailVerified) {
+          result.push(userRecord);
+        }
+      });
+      return res.status(200).send({
+        status: true,
+        message: "Successfully fetched users",
+        users: result,
+      });
+    })
+    .catch(function (error) {
+      res.status(500).send({
+        status: false,
+        message: "Error fetching user",
+        users: [],
+      });
+    });
+};

@@ -30,4 +30,5 @@ module.exports = (app) => {
   const firebaseAdmin = require("../controllers/firebaseAdmin.controller.js");
 
   app.post("/firebase/delete/user", firebaseAdmin.delete);
+  app.post("/firebase/list/all/user", firebaseAdmin.listAllUsers);
 };
