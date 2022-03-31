@@ -4,7 +4,7 @@ module.exports = (app) => {
   app.use(function (req, res, next) {
     // Website you wish to allow to connect
     const origin = req.headers.origin;
-    if (["https://goodbookbible.study"].includes(origin)) {
+    if (allowURL.includes(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
     }
 
@@ -31,4 +31,5 @@ module.exports = (app) => {
 
   app.post("/firebase/delete/user", firebaseAdmin.delete);
   app.post("/firebase/list/all/user", firebaseAdmin.listAllUsers);
+  app.get("/firebase/list/all/user", firebaseAdmin.listAllUsers);
 };
