@@ -4,7 +4,7 @@ module.exports = (app) => {
   app.use(function (req, res, next) {
     // Website you wish to allow to connect
     const origin = req.headers.origin;
-    if (allowURL.includes(origin)) {
+    if (["https://goodbookbible.study"].includes(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
     }
 
