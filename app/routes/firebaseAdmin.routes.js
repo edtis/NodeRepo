@@ -1,4 +1,5 @@
 const allowURL = require("../../config/global.config");
+var cors = require("cors");
 module.exports = (app) => {
   // Add headers
   app.use(function (req, res, next) {
@@ -28,7 +29,7 @@ module.exports = (app) => {
     next();
   });
   const firebaseAdmin = require("../controllers/firebaseAdmin.controller.js");
-
+  app.use(cors({ origin: true }));
   app.post("/firebase/delete/user", firebaseAdmin.delete);
   app.post("/firebase/list/all/user", firebaseAdmin.listAllUsers);
   app.get("/firebase/list/all/user", firebaseAdmin.listAllUsers);
